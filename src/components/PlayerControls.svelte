@@ -250,14 +250,14 @@
 
   .play-btn {
     background: var(--accent);
-    color: white;
+    color: #1a1625;
     width: 44px;
     height: 44px;
   }
 
   .play-btn:hover:not(:disabled) {
     background: var(--accent-hover);
-    color: white;
+    color: #1a1625;
   }
 
   .speed-control {

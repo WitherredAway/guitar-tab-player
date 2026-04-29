@@ -282,9 +282,9 @@
     font-size: 0.85rem;
     color: var(--warning);
     padding: 8px 12px;
-    background: rgba(245, 158, 11, 0.1);
+    background: rgba(240, 212, 160, 0.1);
     border-radius: var(--radius);
-    border: 1px solid rgba(245, 158, 11, 0.2);
+    border: 1px solid rgba(240, 212, 160, 0.2);
   }
 
   .spinner {

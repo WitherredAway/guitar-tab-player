@@ -1,24 +1,24 @@
 :root {
-  --bg: #0f0f0f;
-  --bg-surface: #1a1a2e;
-  --bg-surface-hover: #22223a;
-  --bg-input: #16162a;
-  --text: #e0e0e0;
-  --text-muted: #888;
-  --text-heading: #f5f5f5;
-  --accent: #7c3aed;
-  --accent-hover: #6d28d9;
-  --accent-glow: rgba(124, 58, 237, 0.3);
-  --border: #2a2a3e;
-  --border-focus: #7c3aed;
-  --success: #22c55e;
-  --warning: #f59e0b;
-  --error: #ef4444;
+  --bg: #1a1625;
+  --bg-surface: #241f35;
+  --bg-surface-hover: #2e2845;
+  --bg-input: #1e1930;
+  --text: #e0dae8;
+  --text-muted: #9b8fb5;
+  --text-heading: #f0eaf5;
+  --accent: #d4bbff;
+  --accent-hover: #c5a6ff;
+  --accent-glow: rgba(212, 187, 255, 0.2);
+  --border: #352f4a;
+  --border-focus: #d4bbff;
+  --success: #a3e4b8;
+  --warning: #f0d4a0;
+  --error: #f0a0a0;
   --mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', ui-monospace, Consolas, monospace;
   --sans: 'Inter', system-ui, -apple-system, sans-serif;
   --radius: 8px;
   --radius-lg: 12px;
-  --shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  --shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
 }
 
 *,

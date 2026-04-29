@@ -173,7 +173,7 @@
 
   .col-active {
     background: var(--accent);
-    color: white;
+    color: #1a1625;
     border-radius: 2px;
     padding: 0 1px;
   }
