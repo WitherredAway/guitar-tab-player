@@ -99,12 +99,12 @@
     // Calculate time until next column (4x slower base so old 0.25x = new 1x)
     let intervalMs = 600 / speed;
 
-    // Use position gaps for more natural timing, capped to avoid long pauses between parts
+    // Use position gaps for more natural timing
     if (currentIndex + 1 < parsedData.timeline.length) {
       const currentPos = column.position;
       const nextPos = parsedData.timeline[currentIndex + 1].position;
       const gap = nextPos - currentPos;
-      intervalMs = Math.max(240, Math.min(gap * 200, 800)) / speed;
+      intervalMs = Math.max(240, gap * 200) / speed;
     }
 
     currentIndex++;
