@@ -151,7 +151,7 @@
         aria-label="Previous chord"
       >
         <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
-          <path d="M11 18L3 12l8-6v12zm1 0l8-6-8-6v12z" />
+          <path d="M12 6l-8 6 8 6V6zm8 0l-8 6 8 6V6z" />
         </svg>
       </button>
 
@@ -181,7 +181,7 @@
         aria-label="Next chord"
       >
         <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
-          <path d="M2 18l8-6-8-6v12zm10 0l8-6-8-6v12z" />
+          <path d="M4 6l8 6-8 6V6zm8 0l8 6-8 6V6z" />
         </svg>
       </button>
 
@@ -265,6 +265,10 @@
     align-items: center;
     justify-content: space-between;
     gap: 16px;
+  }
+
+  .position-display, .speed-control {
+    flex: 1;
   }
 
   .position-display {
