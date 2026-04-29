@@ -7,7 +7,33 @@
   /** @type {string} */
   let { value = '', oninput = () => {} } = $props();
 
-  const EXAMPLE_TAB = `e|3----5h8-5h8p5\\3-3p0-----------------|------0-------0--------0-------0|
+  const EXAMPLES = [
+    {
+      name: 'Example 1',
+      tab: `e|-----------------|
+B|-----------------|
+G|-----------------|
+D|-----------------|
+A|-----------------|
+E|3-3-3-3-3-3-3-3-3|
+
+e|0--------------------------------------------------------|
+B|--3-0-----------------------0------------0---------------|
+G|------0h2-0--4p2p0--0---------2-0-----0----2-0-0--0------|
+D|------------------2---0-----------0h2--------------------|
+A|-------------------------2-------------------------------|
+E|3-3-3-3--3-3-3----3-3-3-3-3-3-3-3-3--3-3-3-3-3-3-3-3-----|
+
+e|0--------------------------------------------------------|
+B|--3-0-----------------------0----------------------------|
+G|------2---0--4p2p0--0---------2-0-----0h2-2h4p2-0h2-0--0-|
+D|------------------2---0-----------0h2--------------------|
+A|-------------------------2-------------------------------|
+E|3-3-3-3--3-3-3----3-3-3-3-3-3-3-3-3--3--3-3----3--3-3-3-3|`,
+    },
+    {
+      name: 'Example 2',
+      tab: `e|3----5h8-5h8p5\\3-3p0-----------------|------0-------0--------0-------0|
 C|----------------------2h4---2p0-2/4-2|2---2---2---2----2---2----2--2--|
 G|-------------------------------------|--------------------------------|
 C|-------------------------------------|--------------------------------|
@@ -33,11 +59,17 @@ C|----2/4-----2-----2/4\\2p0|--------0------------0---------0--|
 G|0h2-0---0h2-0-----0------|----------------------------------|
 C|----2/4-----2-----2/4\\2p0|--0h2h4---4--4/7-2-2---2p0-0------|
 G|----0-------0-----0------|----------------------------------|
-C|-------------------------|0------------0---0-----------0---0|`;
+C|-------------------------|0------------0---0-----------0---0|`,
+    },
+  ];
 
-  function loadExample() {
-    value = EXAMPLE_TAB;
-    oninput(value);
+  function handleExampleChange(e) {
+    const idx = parseInt(e.target.value, 10);
+    if (idx >= 0 && idx < EXAMPLES.length) {
+      value = EXAMPLES[idx].tab;
+      oninput(value);
+    }
+    e.target.value = '';
   }
 
   function handleInput(e) {
@@ -49,7 +81,12 @@ C|-------------------------|0------------0---0-----------0---0|`;
 <div class="tab-input">
   <div class="input-header">
     <label for="tab-textarea">Paste your tablature</label>
-    <button class="example-btn" onclick={loadExample}>Load Example</button>
+    <select class="example-select" onchange={handleExampleChange}>
+      <option value="" selected disabled>Load Example</option>
+      {#each EXAMPLES as example, i}
+        <option value={i}>{example.name}</option>
+      {/each}
+    </select>
   </div>
   <textarea
     id="tab-textarea"
@@ -86,17 +123,18 @@ E|-----------|"
     color: var(--text-heading);
   }
 
-  .example-btn {
+  .example-select {
     background: var(--bg-surface);
     color: var(--accent);
     border: 1px solid var(--border);
     padding: 4px 12px;
     border-radius: var(--radius);
     font-size: 0.8rem;
+    cursor: pointer;
     transition: background 0.2s, border-color 0.2s;
   }
 
-  .example-btn:hover {
+  .example-select:hover {
     background: var(--bg-surface-hover);
     border-color: var(--accent);
   }
