@@ -134,7 +134,7 @@ export function createAudioEngine() {
           if (note.targetFret != null) {
             const targetPitch = fretToPitch(note.openNote, note.targetFret, note.string, tuning.length);
             sampler.triggerAttack(pitch, undefined, 0.7 * vol);
-            const slideTime = nextStepMs ? nextStepMs / 1000 : Math.min(duration * 0.4, 0.2);
+            const slideTime = nextStepMs ? Math.min(nextStepMs / 1000, duration * 0.4) : Math.min(duration * 0.4, 0.2);
             setTimeout(() => {
               if (sampler && isLoaded) {
                 sampler.triggerAttack(targetPitch, undefined, 0.65 * vol);
