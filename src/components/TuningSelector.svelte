@@ -105,23 +105,6 @@
     color: var(--text-heading);
   }
 
-  select {
-    background: var(--bg-input);
-    color: var(--text);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 8px 12px;
-    font-size: 0.85rem;
-    outline: none;
-    transition: border-color 0.2s;
-    cursor: pointer;
-  }
-
-  select:focus {
-    border-color: var(--border-focus);
-    box-shadow: 0 0 0 3px var(--accent-glow);
-  }
-
   .custom-tuning {
     display: flex;
     gap: 6px;
