@@ -227,6 +227,7 @@
           timeline={parsedData.timeline}
           {isPlaying}
           onseek={handleSeek}
+          onedit={handleTabInput}
         />
       </section>
     {/if}

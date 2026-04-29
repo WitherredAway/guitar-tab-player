@@ -10,6 +10,7 @@
    *   timeline: object[],
    *   isPlaying: boolean,
    *   onseek: (index: number) => void,
+   *   onedit: (text: string) => void,
    * }} */
   let {
     rawLines = [],
@@ -17,7 +18,11 @@
     timeline = [],
     isPlaying = false,
     onseek = () => {},
+    onedit = () => {},
   } = $props();
+
+  let editing = $state(false);
+  let editText = $state('');
 
   let displayRef = $state(null);
 
@@ -111,22 +116,51 @@
     }
     onseek(closest);
   }
+
+  function startEditing() {
+    editText = rawLines.map(block => block.join('\n')).join('\n\n');
+    editing = true;
+  }
+
+  function saveEdit() {
+    editing = false;
+    onedit(editText);
+  }
+
+  function cancelEdit() {
+    editing = false;
+  }
 </script>
 
 {#if blocks.length > 0}
   <div class="tab-display" bind:this={displayRef}>
     <div class="tab-header">
       <span class="tab-label">Tab</span>
-      {#if isPlaying}
-        <span class="playing-indicator">Playing</span>
-      {/if}
+      <div class="tab-header-right">
+        {#if isPlaying}
+          <span class="playing-indicator">Playing</span>
+        {/if}
+        {#if editing}
+          <button class="edit-btn" onclick={saveEdit}>Save</button>
+          <button class="edit-btn cancel-btn" onclick={cancelEdit}>Cancel</button>
+        {:else}
+          <button class="edit-btn" onclick={startEditing}>Edit</button>
+        {/if}
+      </div>
     </div>
     <div class="tab-content">
-      {#each blocks as blockLines, blockIdx}
-        <!-- svelte-ignore a11y_click_events_have_key_events a11y_no_noninteractive_element_interactions -->
-        <pre class="tab-block" onclick={handleTabClick}>{#each blockLines as line}{#each renderLine(line, 0) as segment}{#if segment.active}<span class="col-active">{segment.text}</span>{:else}{segment.text}{/if}{/each}
+      {#if editing}
+        <textarea
+          class="tab-edit-textarea"
+          bind:value={editText}
+        ></textarea>
+      {:else}
+        {#each blocks as blockLines, blockIdx}
+          <!-- svelte-ignore a11y_click_events_have_key_events a11y_no_noninteractive_element_interactions -->
+          <pre class="tab-block" onclick={handleTabClick}>{#each blockLines as line}{#each renderLine(line, 0) as segment}{#if segment.active}<span class="col-active">{segment.text}</span>{:else}{segment.text}{/if}{/each}
 {/each}</pre>
-      {/each}
+        {/each}
+      {/if}
     </div>
   </div>
 {/if}
@@ -152,6 +186,49 @@
     font-size: 0.8rem;
     font-weight: 600;
     color: var(--text-heading);
+  }
+
+  .tab-header-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .edit-btn {
+    font-size: 0.75rem;
+    padding: 3px 10px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    background: var(--bg-surface-hover);
+    color: var(--text-heading);
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s;
+  }
+
+  .edit-btn:hover {
+    background: var(--accent);
+    color: #1a1625;
+    border-color: var(--accent);
+  }
+
+  .cancel-btn {
+    background: transparent;
+  }
+
+  .tab-edit-textarea {
+    width: 100%;
+    min-height: 200px;
+    background: var(--bg-input);
+    color: var(--text);
+    border: none;
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    line-height: 1.6;
+    resize: vertical;
+    outline: none;
+    padding: 0;
+    white-space: pre;
+    overflow-x: auto;
   }
 
   .playing-indicator {
