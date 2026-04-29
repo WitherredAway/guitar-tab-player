@@ -1,15 +1,15 @@
 :root {
-  --bg: #1a1625;
-  --bg-surface: #241f35;
-  --bg-surface-hover: #2e2845;
-  --bg-input: #1e1930;
-  --text: #e0dae8;
-  --text-muted: #9b8fb5;
-  --text-heading: #f0eaf5;
+  --bg: #0a0a0a;
+  --bg-surface: #141414;
+  --bg-surface-hover: #1e1e1e;
+  --bg-input: #111111;
+  --text: #c9b8e8;
+  --text-muted: #7a6b9a;
+  --text-heading: #e8dff5;
   --accent: #d4bbff;
   --accent-hover: #c5a6ff;
-  --accent-glow: rgba(212, 187, 255, 0.2);
-  --border: #352f4a;
+  --accent-glow: rgba(212, 187, 255, 0.15);
+  --border: #2a2040;
   --border-focus: #d4bbff;
   --success: #a3e4b8;
   --warning: #f0d4a0;
@@ -18,7 +18,7 @@
   --sans: 'Inter', system-ui, -apple-system, sans-serif;
   --radius: 8px;
   --radius-lg: 12px;
-  --shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+  --shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
 }
 
 *,
@@ -50,4 +50,29 @@ button {
 
 input, select, textarea {
   font-family: var(--sans);
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-input);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent);
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) var(--bg-input);
 }
