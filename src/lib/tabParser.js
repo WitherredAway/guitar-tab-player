@@ -94,8 +94,15 @@ export function parseTab(rawText) {
     return { tuning: [], timeline: [], rawLines: [] };
   }
 
-  // Detect tuning from the first block's string labels
-  const tuning = blocks[0].labels.slice();
+  // Detect tuning from the first block's string labels, or default to standard
+  const STANDARD_TUNING = ['E', 'A', 'D', 'G', 'B', 'e'];
+  let tuning = blocks[0].labels.slice();
+  if (tuning.every(l => l === '')) {
+    tuning = STANDARD_TUNING.slice(0, tuning.length);
+    for (const block of blocks) {
+      block.labels = tuning.slice();
+    }
+  }
 
   // Merge consecutive blocks with the same number of strings into one
   const merged = mergeBlocks(blocks);
@@ -202,10 +209,12 @@ function mergeBlocks(blocks) {
 
 /**
  * Check if a line looks like a tab string line.
- * Must have a label prefix followed by | and content.
+ * Matches labeled lines (e.g. "e|---0---|") and unlabeled lines (e.g. "|---0---|").
  */
 function isTabLine(line) {
-  return /^[A-Ga-g][#b]?\|/.test(line);
+  if (/^[A-Ga-g][#b]?\|/.test(line)) return true;
+  if (/^\|[\d\-hpHP\/\\|~*xXsS .]+\|?$/.test(line)) return true;
+  return false;
 }
 
 /**
@@ -217,10 +226,16 @@ function buildBlock(lines) {
 
   for (const line of lines) {
     const pipeIdx = line.indexOf('|');
-    const label = line.substring(0, pipeIdx).trim();
-    const content = line.substring(pipeIdx + 1);
-    labels.push(label);
-    contents.push(content);
+    if (pipeIdx > 0 && /^[A-Ga-g][#b]?$/.test(line.substring(0, pipeIdx).trim())) {
+      labels.push(line.substring(0, pipeIdx).trim());
+      contents.push(line.substring(pipeIdx + 1));
+    } else if (pipeIdx === 0) {
+      labels.push('');
+      contents.push(line.substring(1));
+    } else {
+      labels.push('');
+      contents.push(line);
+    }
   }
 
   // Tab lines are typically written top-to-bottom = highest string to lowest.
