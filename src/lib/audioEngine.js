@@ -120,19 +120,22 @@ export function createAudioEngine() {
       const pitch = fretToPitch(note.openNote, note.fret, note.string, tuning.length);
       const vol = stringVolumes ? (stringVolumes[note.string] ?? 1) : 1;
 
+      // Technique targets (e.g. the "4" in "2h4") play softer (legato, not plucked)
+      if (note.prevTechnique) {
+        sampler.triggerAttackRelease(pitch, duration * 0.8, undefined, 0.45 * vol);
+        continue;
+      }
+
       switch (note.technique) {
         case 'hammer-on':
-          sampler.triggerAttackRelease(pitch, duration * 0.8, undefined, 0.6 * vol);
-          break;
-
         case 'pull-off':
-          sampler.triggerAttackRelease(pitch, duration * 0.7, undefined, 0.5 * vol);
+          // Source note: plucked normally
+          sampler.triggerAttackRelease(pitch, duration * 0.8, undefined, 0.7 * vol);
           break;
 
         case 'slide-up':
         case 'slide-down': {
-          // Play a brief source note that quickly fades, giving a slide feel.
-          // The target note plays normally at its own position in the timeline.
+          // Brief source note that quickly fades — target plays at its own position
           const slideDur = Math.min(duration * 0.3, 0.15);
           sampler.triggerAttackRelease(pitch, slideDur, undefined, 0.4 * vol);
           break;

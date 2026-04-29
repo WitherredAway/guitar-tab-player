@@ -324,6 +324,7 @@ function parseBlock(block, tuning) {
         string: s,
         fret,
         technique: technique || null,
+        prevTechnique: prevTechnique || null,
         openNote: tuning[s] || (block.labels[s]),
       };
 
