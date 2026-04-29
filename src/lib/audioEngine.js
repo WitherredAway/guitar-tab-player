@@ -15,7 +15,7 @@ const SAMPLES_BASE = 'https://nbrosowsky.github.io/tonejs-instruments/samples';
  * Keys are scientific pitch notation, values are file paths.
  * The Sampler auto-repitches between these anchor samples.
  */
-const GUITAR_SAMPLES = {
+const ACOUSTIC_SAMPLES = {
   'A2': 'A2', 'C3': 'C3', 'D#3': 'Ds3', 'F#3': 'Fs3',
   'A3': 'A3', 'C4': 'C4', 'D#4': 'Ds4', 'F#4': 'Fs4',
   'A4': 'A4', 'C5': 'C5',
@@ -26,10 +26,20 @@ const GUITAR_SAMPLES = {
   'F2': 'F2', 'F3': 'F3', 'F4': 'F4',
 };
 
-/** Build the sample URL map for a given instrument folder. */
-function buildSampleUrls(folder) {
+const ELECTRIC_SAMPLES = {
+  'A2': 'A2', 'A3': 'A3', 'A4': 'A4',
+  'C3': 'C3', 'C4': 'C4', 'C5': 'C5',
+  'C#2': 'Cs2', 'D#3': 'Ds3', 'D#4': 'Ds4',
+  'E2': 'E2',
+  'F#2': 'Fs2', 'F#3': 'Fs3', 'F#4': 'Fs4',
+};
+
+/** Build the sample URL map for a given instrument type. */
+function buildSampleUrls(type) {
+  const folder = type === 'electric' ? 'guitar-electric' : 'guitar-acoustic';
+  const samples = type === 'electric' ? ELECTRIC_SAMPLES : ACOUSTIC_SAMPLES;
   const urls = {};
-  for (const [note, file] of Object.entries(GUITAR_SAMPLES)) {
+  for (const [note, file] of Object.entries(samples)) {
     urls[note] = `${file}.mp3`;
   }
   return { urls, baseUrl: `${SAMPLES_BASE}/${folder}/` };
@@ -60,8 +70,7 @@ export function createAudioEngine() {
     // Ensure audio context is started (browser requires user gesture)
     await Tone.start();
 
-    const folder = type === 'electric' ? 'guitar-electric' : 'guitar-acoustic';
-    const { urls, baseUrl } = buildSampleUrls(folder);
+    const { urls, baseUrl } = buildSampleUrls(type);
 
     // Dispose previous sampler if switching
     if (sampler) {
