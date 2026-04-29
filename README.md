@@ -9,9 +9,9 @@ A web-based guitar tablature player that brings ASCII tabs to life with real sam
 [![Svelte](https://img.shields.io/badge/Svelte_5-FF3E00?style=for-the-badge&logo=svelte&logoColor=white)](https://svelte.dev/)
 [![Tone.js](https://img.shields.io/badge/Tone.js-000000?style=for-the-badge&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJ3aGl0ZSI+PHBhdGggZD0iTTEyIDNWMTMuNTVBNCA0IDAgMSAwIDE0IDEzVjdINDBWM0gxMloiLz48L3N2Zz4=&logoColor=white)](https://tonejs.github.io/)
 [![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vite.dev/)
-[![GitHub Pages](https://img.shields.io/badge/GitHub_Pages-222222?style=for-the-badge&logo=githubpages&logoColor=white)](https://witherredaway.github.io/guitar-tabs-player/)
+[![GitHub Pages](https://img.shields.io/badge/GitHub_Pages-222222?style=for-the-badge&logo=githubpages&logoColor=white)](https://witherredaway.github.io/guitar-tab-player/)
 
-**[Visit the Website](https://witherredaway.github.io/guitar-tabs-player/)**
+**[Visit the Website](https://witherredaway.github.io/guitar-tab-player/)**
 
 </div>
 
@@ -114,8 +114,8 @@ src/
 
 ```bash
 # Clone the repo
-git clone https://github.com/WitherredAway/guitar-tabs-player.git
-cd guitar-tabs-player
+git clone https://github.com/WitherredAway/guitar-tab-player.git
+cd guitar-tab-player
 
 # Install dependencies
 npm install
@@ -124,7 +124,7 @@ npm install
 npm run dev
 ```
 
-The app will be available at `http://localhost:5173/guitar-tabs-player/`.
+The app will be available at `http://localhost:5173/guitar-tab-player/`.
 
 ### Production Build
 
