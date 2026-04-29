@@ -113,16 +113,22 @@
     const column = parsedData.timeline[currentIndex];
     activePosition = column.position;
     const noteDuration = 1.6 / speed;
-    engine.playNotes(column.notes, activeTuning, noteDuration, stringVolumes);
+
+    // Calculate gap to next position so slides can sync their target timing
+    let totalGapMs = 0;
+    let gap = 0;
+    if (currentIndex + 1 < parsedData.timeline.length) {
+      const nextPos = parsedData.timeline[currentIndex + 1].position;
+      gap = nextPos - column.position;
+      totalGapMs = Math.max(240, gap * 200) / speed;
+    }
+
+    engine.playNotes(column.notes, activeTuning, noteDuration, stringVolumes, totalGapMs || null);
 
     if (currentIndex + 1 >= parsedData.timeline.length) {
       isPlaying = false;
       return;
     }
-
-    const nextPos = parsedData.timeline[currentIndex + 1].position;
-    const gap = nextPos - column.position;
-    const totalGapMs = Math.max(240, gap * 200) / speed;
     const stepMs = totalGapMs / gap;
 
     currentIndex++;
