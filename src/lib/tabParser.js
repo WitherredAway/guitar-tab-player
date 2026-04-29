@@ -319,10 +319,6 @@ function parseBlock(block, tuning) {
       const technique = detectTechnique(line, endCol);
       const prevTechnique = detectPrevTechnique(line, col);
 
-      // Skip notes that are slide targets — the audio engine already plays
-      // the target pitch as part of the slide effect
-      if (prevTechnique === 'slide-up' || prevTechnique === 'slide-down') continue;
-
       const event = {
         position: pos,
         string: s,

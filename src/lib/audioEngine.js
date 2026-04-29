@@ -113,7 +113,7 @@ export function createAudioEngine() {
    * @param {number} [duration=0.5] - Note duration in seconds
    * @param {number[]} [stringVolumes] - Per-string volume multipliers (0–1)
    */
-  function playNotes(notes, tuning, duration = 0.5, stringVolumes, nextStepMs) {
+  function playNotes(notes, tuning, duration = 0.5, stringVolumes) {
     if (!sampler || !isLoaded) return;
 
     for (const note of notes) {
@@ -131,24 +131,10 @@ export function createAudioEngine() {
 
         case 'slide-up':
         case 'slide-down': {
-          if (note.targetFret != null) {
-            const targetPitch = fretToPitch(note.openNote, note.targetFret, note.string, tuning.length);
-            sampler.triggerAttack(pitch, undefined, 0.7 * vol);
-            const slideTime = nextStepMs ? Math.min(nextStepMs / 1000, duration * 0.4) : Math.min(duration * 0.4, 0.2);
-            setTimeout(() => {
-              if (sampler && isLoaded) {
-                sampler.triggerAttack(targetPitch, undefined, 0.65 * vol);
-              }
-            }, slideTime * 1000);
-            setTimeout(() => {
-              if (sampler && isLoaded) {
-                sampler.triggerRelease(pitch);
-                sampler.triggerRelease(targetPitch);
-              }
-            }, duration * 1000);
-          } else {
-            sampler.triggerAttackRelease(pitch, duration, undefined, 0.7 * vol);
-          }
+          // Play a brief source note that quickly fades, giving a slide feel.
+          // The target note plays normally at its own position in the timeline.
+          const slideDur = Math.min(duration * 0.3, 0.15);
+          sampler.triggerAttackRelease(pitch, slideDur, undefined, 0.4 * vol);
           break;
         }
 
