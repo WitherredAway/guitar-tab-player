@@ -21,6 +21,7 @@
   let isLoading = $state(false);
   let playInterval = $state(null);
   let stringVolumes = $state([1, 1, 1, 1, 1, 1]);
+  let masterVolume = $state(0.8);
 
   // Audio engine
   const engine = createAudioEngine();
@@ -149,6 +150,12 @@
     speed = newSpeed;
   }
 
+  function handleVolumeChange(vol) {
+    masterVolume = vol;
+    const db = vol <= 0 ? -Infinity : 20 * Math.log10(vol);
+    engine.setVolume(db);
+  }
+
   function handleSeek(index) {
     handlePause();
     currentIndex = index;
@@ -247,6 +254,8 @@
         onlast={handleLast}
         onspeedchange={handleSpeedChange}
         onseek={handleSeek}
+        volume={masterVolume}
+        onvolumechange={handleVolumeChange}
       />
     </section>
   </div>

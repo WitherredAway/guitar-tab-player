@@ -18,6 +18,8 @@
    *   onlast: () => void,
    *   onspeedchange: (speed: number) => void,
    *   onseek: (index: number) => void,
+   *   volume: number,
+   *   onvolumechange: (volume: number) => void,
    * }} */
   let {
     isPlaying = false,
@@ -33,6 +35,8 @@
     onlast = () => {},
     onspeedchange = () => {},
     onseek = () => {},
+    volume = 0.8,
+    onvolumechange = () => {},
   } = $props();
 
   let progressPercent = $derived(
@@ -73,6 +77,10 @@
   function incrementSpeed() {
     const newSpeed = Math.round((speed + 0.1) * 100) / 100;
     onspeedchange(newSpeed);
+  }
+
+  function handleVolumeInput(e) {
+    onvolumechange(parseFloat(e.target.value));
   }
 
   function handleProgressClick(e) {
@@ -221,6 +229,23 @@
       />
       <button class="speed-btn" onclick={incrementSpeed} aria-label="Increase speed">+</button>
     </div>
+
+    <!-- Volume control -->
+    <div class="volume-control">
+      <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16" class="volume-icon">
+        <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3A4.5 4.5 0 0014 8.5v7a4.49 4.49 0 002.5-3.5z" />
+      </svg>
+      <input
+        type="range"
+        class="master-volume-slider"
+        min="0"
+        max="1"
+        step="0.05"
+        value={volume}
+        oninput={handleVolumeInput}
+        aria-label="Master volume"
+      />
+    </div>
   </div>
 </div>
 
@@ -316,14 +341,14 @@
 
   .play-btn {
     background: var(--accent);
-    color: #1a1625;
+    color: #0a0a0a;
     width: 44px;
     height: 44px;
   }
 
   .play-btn:hover:not(:disabled) {
     background: var(--accent-hover);
-    color: #1a1625;
+    color: #0a0a0a;
   }
 
   .speed-control {
@@ -376,7 +401,7 @@
 
   .speed-btn:hover {
     background: var(--accent);
-    color: #1a1625;
+    color: #0a0a0a;
     border-color: var(--accent);
   }
 
@@ -384,6 +409,54 @@
     width: 80px;
     accent-color: var(--accent);
     cursor: pointer;
+  }
+
+  .volume-control {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .volume-icon {
+    color: var(--text-muted);
+    flex-shrink: 0;
+  }
+
+  .master-volume-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 60px;
+    height: 6px;
+    background: var(--bg-input);
+    border-radius: 3px;
+    outline: none;
+    cursor: pointer;
+    transition: height 0.15s;
+  }
+
+  .master-volume-slider:hover {
+    height: 8px;
+  }
+
+  .master-volume-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 12px;
+    height: 12px;
+    background: var(--accent);
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
+  }
+
+  .master-volume-slider::-moz-range-thumb {
+    width: 12px;
+    height: 12px;
+    background: var(--accent);
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
   }
 
   @media (max-width: 480px) {

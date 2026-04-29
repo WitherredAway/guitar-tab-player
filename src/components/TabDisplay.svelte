@@ -207,7 +207,7 @@
 
   .edit-btn:hover {
     background: var(--accent);
-    color: #1a1625;
+    color: #0a0a0a;
     border-color: var(--accent);
   }
 
@@ -276,7 +276,7 @@
 
   .col-active {
     background: var(--accent);
-    color: #1a1625;
+    color: #0a0a0a;
     border-radius: 2px;
     padding: 0 1px;
   }

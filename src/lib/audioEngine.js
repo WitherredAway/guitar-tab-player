@@ -179,6 +179,13 @@ export function createAudioEngine() {
     if (isLoaded && cb) cb();
   }
 
+  /** Set master volume in dB. 0 = unity, -Infinity = mute. */
+  function setVolume(db) {
+    if (volume) {
+      volume.volume.value = db;
+    }
+  }
+
   /** Clean up all audio resources. */
   function dispose() {
     if (sampler) {
@@ -202,6 +209,7 @@ export function createAudioEngine() {
     playNotes,
     stopAll,
     onLoad,
+    setVolume,
     dispose,
     get isLoaded() { return isLoaded; },
     get currentType() { return currentType; },
