@@ -9,12 +9,14 @@
    *   currentIndex: number,
    *   timeline: object[],
    *   isPlaying: boolean,
+   *   onseek: (index: number) => void,
    * }} */
   let {
     rawLines = [],
     currentIndex = -1,
     timeline = [],
     isPlaying = false,
+    onseek = () => {},
   } = $props();
 
   let displayRef = $state(null);
@@ -87,6 +89,28 @@
 
     return segments;
   }
+
+  function handleTabClick(e) {
+    if (timeline.length === 0) return;
+    const pre = e.currentTarget;
+    const rect = pre.getBoundingClientRect();
+    const x = e.clientX - rect.left + pre.scrollLeft;
+    const charWidth = pre.scrollWidth / (pre.textContent.split('\n')[0]?.length || 1);
+    const clickedCol = Math.floor(x / charWidth);
+    const firstLine = rawLines[0]?.[0] || '';
+    const pipeIdx = firstLine.indexOf('|');
+    const contentCol = Math.max(0, clickedCol - (pipeIdx + 1));
+    let closest = 0;
+    let minDist = Infinity;
+    for (let i = 0; i < timeline.length; i++) {
+      const dist = Math.abs(timeline[i].position - contentCol);
+      if (dist < minDist) {
+        minDist = dist;
+        closest = i;
+      }
+    }
+    onseek(closest);
+  }
 </script>
 
 {#if blocks.length > 0}
@@ -99,7 +123,8 @@
     </div>
     <div class="tab-content">
       {#each blocks as blockLines, blockIdx}
-        <pre class="tab-block">{#each blockLines as line}{#each renderLine(line, 0) as segment}{#if segment.active}<span class="col-active">{segment.text}</span>{:else}{segment.text}{/if}{/each}
+        <!-- svelte-ignore a11y_click_events_have_key_events a11y_no_noninteractive_element_interactions -->
+        <pre class="tab-block" onclick={handleTabClick}>{#each blockLines as line}{#each renderLine(line, 0) as segment}{#if segment.active}<span class="col-active">{segment.text}</span>{:else}{segment.text}{/if}{/each}
 {/each}</pre>
       {/each}
     </div>
@@ -165,6 +190,7 @@
     margin: 0 0 16px;
     white-space: pre;
     tab-size: 4;
+    cursor: pointer;
   }
 
   .tab-block:last-child {
