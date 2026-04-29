@@ -83,15 +83,6 @@
     onvolumechange(parseFloat(e.target.value));
   }
 
-  function handleProgressClick(e) {
-    if (totalSteps === 0) return;
-    const rect = e.currentTarget.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const percent = x / rect.width;
-    const index = Math.round(percent * (totalSteps - 1));
-    onseek(Math.max(0, Math.min(index, totalSteps - 1)));
-  }
-
   function handleKeydown(e) {
     if (e.target.tagName === 'TEXTAREA' || e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
 
@@ -116,18 +107,16 @@
 
 <div class="player-controls" class:disabled={!isLoaded || totalSteps === 0}>
   <!-- Progress bar -->
-  <!-- svelte-ignore a11y_click_events_have_key_events a11y_no_noninteractive_element_interactions a11y_no_noninteractive_tabindex -->
-  <div
-    class="progress-bar"
-    role="slider"
-    tabindex="0"
-    aria-valuenow={currentIndex}
-    aria-valuemin={0}
-    aria-valuemax={totalSteps - 1}
-    onclick={handleProgressClick}
-  >
-    <div class="progress-fill" style="width: {progressPercent}%"></div>
-  </div>
+  <input
+    type="range"
+    class="styled-slider progress-slider"
+    min="0"
+    max={Math.max(totalSteps - 1, 0)}
+    value={currentIndex}
+    oninput={(e) => onseek(parseInt(e.target.value))}
+    aria-label="Playback position"
+    style="background: linear-gradient(to right, var(--accent) {progressPercent}%, var(--bg-input) {progressPercent}%);"
+  />
 
   <div class="controls-row">
     <!-- Position display -->
@@ -221,11 +210,13 @@
       <input
         id="speed-slider"
         type="range"
+        class="styled-slider"
         min="0.1"
         max="4"
         step="0.05"
         value={Math.min(4, speed)}
         oninput={handleSpeedChange}
+        style="background: linear-gradient(to right, var(--accent) {((Math.min(4, speed) - 0.1) / 3.9 * 100)}%, var(--bg-input) {((Math.min(4, speed) - 0.1) / 3.9 * 100)}%);"
       />
       <button class="speed-btn" onclick={incrementSpeed} aria-label="Increase speed">+</button>
     </div>
@@ -237,13 +228,14 @@
       </svg>
       <input
         type="range"
-        class="master-volume-slider"
+        class="styled-slider master-volume-slider"
         min="0"
         max="1"
         step="0.05"
         value={volume}
         oninput={handleVolumeInput}
         aria-label="Master volume"
+        style="background: linear-gradient(to right, var(--accent) {(volume * 100)}%, var(--bg-input) {(volume * 100)}%);"
       />
     </div>
   </div>
@@ -263,26 +255,9 @@
     pointer-events: none;
   }
 
-  .progress-bar {
+  .progress-slider {
     width: 100%;
-    height: 6px;
-    background: var(--bg-input);
-    border-radius: 3px;
-    cursor: pointer;
     margin-bottom: 12px;
-    overflow: hidden;
-    transition: height 0.15s;
-  }
-
-  .progress-bar:hover {
-    height: 8px;
-  }
-
-  .progress-fill {
-    height: 100%;
-    background: var(--accent);
-    border-radius: 3px;
-    transition: width 0.1s ease-out;
   }
 
   .controls-row {
@@ -407,8 +382,6 @@
 
   .speed-control input[type='range'] {
     width: 80px;
-    accent-color: var(--accent);
-    cursor: pointer;
   }
 
   .volume-control {
@@ -423,40 +396,7 @@
   }
 
   .master-volume-slider {
-    -webkit-appearance: none;
-    appearance: none;
     width: 60px;
-    height: 6px;
-    background: var(--bg-input);
-    border-radius: 3px;
-    outline: none;
-    cursor: pointer;
-    transition: height 0.15s;
-  }
-
-  .master-volume-slider:hover {
-    height: 8px;
-  }
-
-  .master-volume-slider::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 12px;
-    height: 12px;
-    background: var(--accent);
-    border-radius: 50%;
-    cursor: pointer;
-    box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
-  }
-
-  .master-volume-slider::-moz-range-thumb {
-    width: 12px;
-    height: 12px;
-    background: var(--accent);
-    border-radius: 50%;
-    border: none;
-    cursor: pointer;
-    box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
   }
 
   @media (max-width: 480px) {

@@ -38,7 +38,8 @@
             step="0.05"
             value={displayVolumes[i] ?? 1}
             oninput={(e) => handleChange(i, e.target.value)}
-            class="volume-slider"
+            class="styled-slider volume-slider"
+            style="background: linear-gradient(to right, var(--accent) {((displayVolumes[i] ?? 1) * 100)}%, var(--bg-input) {((displayVolumes[i] ?? 1) * 100)}%);"
           />
           <span class="volume-value">{Math.round((displayVolumes[i] ?? 1) * 100)}%</span>
         </div>
@@ -82,40 +83,7 @@
   }
 
   .volume-slider {
-    -webkit-appearance: none;
-    appearance: none;
     width: 100%;
-    height: 6px;
-    background: var(--bg-input);
-    border-radius: 3px;
-    outline: none;
-    cursor: pointer;
-    transition: height 0.15s;
-  }
-
-  .volume-slider:hover {
-    height: 8px;
-  }
-
-  .volume-slider::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 14px;
-    height: 14px;
-    background: var(--accent);
-    border-radius: 50%;
-    cursor: pointer;
-    box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
-  }
-
-  .volume-slider::-moz-range-thumb {
-    width: 14px;
-    height: 14px;
-    background: var(--accent);
-    border-radius: 50%;
-    border: none;
-    cursor: pointer;
-    box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
   }
 
   .volume-value {
