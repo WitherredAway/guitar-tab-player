@@ -1,59 +1,28 @@
 # Guitar Tab Player
 
-A web app that plays guitar tablature. Paste any tab, and it plays it back with real guitar samples.
+A web-based guitar tablature player built with Svelte 5 and Tone.js. Paste any ASCII guitar tab, and it plays it back with real sampled guitar sounds — complete with hammer-ons, pull-offs, slides, and more.
+
+**[Live Demo](https://witherredaway.github.io/guitar-tabs-player/)**
+
+## Screenshots
+
+| Paste your tab | Tab loaded & ready to play |
+|---|---|
+| ![Empty state](https://app.devin.ai/attachments/9986599e-a007-4e15-a5df-d0b3ff692495/readme-empty.png) | ![Tab loaded](https://app.devin.ai/attachments/42136d25-27fc-42c1-9627-4761f2441c48/readme-tab-loaded.png) |
 
 ## Features
 
-- **Paste & play** — paste raw guitar tab text and hear it played back
-- **Auto-detect tuning** — reads string labels (`e|`, `C|`, `G|`, etc.) to detect tuning
-- **Tuning selector** — dropdown with auto-detected tuning, common presets (Standard, Drop D, DADGAD, Open G/D/E/A), and custom option
-- **Acoustic & electric** — switch between guitar sounds
-- **Technique support** — hammer-ons (`h`), pull-offs (`p`), slides up (`/`) and down (`\`)
-- **Player controls** — play/pause, prev/next chord, clickable progress bar
-- **Speed control** — 0.25x to 2.0x playback speed
-- **Keyboard shortcuts** — Space (play/pause), Arrow keys (prev/next)
-- **Tab display** — visual rendering with playback position highlighting
-- **Responsive** — works on desktop and mobile
-
-## Tech Stack
-
-- **[Svelte 5](https://svelte.dev/)** — UI framework
-- **[Vite](https://vite.dev/)** — build tool
-- **[Tone.js](https://tonejs.github.io/)** — audio engine with guitar samples
-
-## Getting Started
-
-```bash
-# Install dependencies
-npm install
-
-# Start dev server
-npm run dev
-
-# Build for production
-npm run build
-
-# Preview production build
-npm run preview
-```
-
-## Project Structure
-
-```
-src/
-├── App.svelte                 # Main app (state management, playback logic)
-├── main.js                    # Entry point
-├── app.css                    # Global styles & CSS variables
-├── lib/
-│   ├── tabParser.js           # Tab text parser (tuning, frets, techniques)
-│   └── audioEngine.js         # Tone.js audio engine (samplers, playback)
-└── components/
-    ├── TabInput.svelte        # Textarea for pasting tabs
-    ├── TuningSelector.svelte  # Tuning dropdown
-    ├── GuitarTypeSelector.svelte  # Acoustic/Electric dropdown
-    ├── PlayerControls.svelte  # Transport controls & speed slider
-    └── TabDisplay.svelte      # Visual tab rendering with highlighting
-```
+- **Paste & play** — paste raw guitar tab text and hear it played back instantly
+- **Auto-detect tuning** — reads string labels (`e|`, `B|`, `G|`, `D|`, `A|`, `E|`, etc.) to automatically detect tuning
+- **Tuning selector** — dropdown with auto-detected tuning, common presets (Standard, Drop D, DADGAD, Open G/D/E/A, Half Step Down), and a custom option with individual string note selectors
+- **Acoustic & electric** — toggle between real guitar sample sets
+- **Technique support** — plays hammer-ons (`h`), pull-offs (`p`), slides up (`/`) and down (`\`) with appropriate velocity and timing
+- **Player controls** — play/pause, previous/next chord navigation, clickable progress bar with seeking
+- **Speed control** — adjustable playback speed from 0.25x to 2.0x
+- **Keyboard shortcuts** — Space (play/pause), Left/Right arrows (prev/next chord)
+- **Tab display** — visual rendering of parsed tab with real-time playback highlighting and auto-scroll
+- **Example tabs** — dropdown with two built-in example tabs to try immediately
+- **Responsive design** — works on desktop and mobile
 
 ## Tab Format
 
@@ -61,17 +30,85 @@ Supports standard ASCII guitar tablature:
 
 ```
 e|3----5h8-5h8p5\3-3p0---|
-C|------2h4---2p0-2/4-2--|
+B|------2h4---2p0-2/4-2--|
 G|-----------------------|
-C|-----------------------|
-G|-----------------------|
-C|0--0-----0-----0-------|
+D|-----------------------|
+A|-----------------------|
+E|0--0-----0-----0-------|
 ```
 
-**Techniques:**
+**Supported techniques:**
 - `h` — hammer-on (e.g., `5h8`)
 - `p` — pull-off (e.g., `8p5`)
 - `/` — slide up (e.g., `2/4`)
 - `\` — slide down (e.g., `5\3`)
 - `-` — sustain / rest
 - `|` — measure separator
+
+Multi-digit fret numbers (10, 12, etc.) are supported. Each block of 6 strings represents a sequential section of the song — blocks are played one after another, not simultaneously.
+
+## Tech Stack
+
+- **[Svelte 5](https://svelte.dev/)** — reactive UI framework with Runes (`$state`, `$derived`, `$effect`)
+- **[Vite](https://vite.dev/)** — fast build tool with hot module replacement
+- **[Tone.js](https://tonejs.github.io/)** — Web Audio API library with real guitar samplers
+
+## Project Structure
+
+```
+src/
+├── App.svelte                    # Main app controller & state management
+├── main.js                       # Entry point
+├── app.css                       # Global styles & CSS variables
+├── lib/
+│   ├── tabParser.js              # Tab text → structured timeline parser
+│   └── audioEngine.js            # Tone.js audio engine (samplers, playback)
+└── components/
+    ├── TabInput.svelte           # Textarea + example tab dropdown
+    ├── TuningSelector.svelte     # Tuning dropdown (auto-detect, presets, custom)
+    ├── GuitarTypeSelector.svelte # Acoustic/Electric selector
+    ├── PlayerControls.svelte     # Transport controls, speed slider, progress bar
+    └── TabDisplay.svelte         # Visual tab rendering with highlighting
+```
+
+## How to Run
+
+### Prerequisites
+
+- [Node.js](https://nodejs.org/) (v18 or later)
+- npm (comes with Node.js)
+
+### Development
+
+```bash
+# Clone the repo
+git clone https://github.com/WitherredAway/guitar-tabs-player.git
+cd guitar-tabs-player
+
+# Install dependencies
+npm install
+
+# Start the dev server (with hot reload)
+npm run dev
+```
+
+The app will be available at `http://localhost:5173/guitar-tabs-player/`.
+
+### Production Build
+
+```bash
+# Build for production
+npm run build
+
+# Preview the production build locally
+npm run preview
+```
+
+### Deployment
+
+The project includes a GitHub Actions workflow for automatic deployment to GitHub Pages. After merging to `main`:
+
+1. Go to repo **Settings → Pages → Source**
+2. Select **GitHub Actions**
+3. The site will auto-deploy on every push to `main`
+4. Live at: **https://witherredaway.github.io/guitar-tabs-player/**
