@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🎸 Guitar Tab Player
+# Guitar Tab Player
 
 ### Paste. Play. Practice.
 
@@ -11,13 +11,13 @@ A web-based guitar tablature player that brings ASCII tabs to life with real sam
 [![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vite.dev/)
 [![GitHub Pages](https://img.shields.io/badge/GitHub_Pages-222222?style=for-the-badge&logo=githubpages&logoColor=white)](https://witherredaway.github.io/guitar-tabs-player/)
 
-**[🌐 Open the Website](https://witherredaway.github.io/guitar-tabs-player/)**
+**[Visit the Website](https://witherredaway.github.io/guitar-tabs-player/)**
 
 </div>
 
 ---
 
-## 📸 Screenshots
+## Screenshots
 
 <div align="center">
 
@@ -29,25 +29,25 @@ A web-based guitar tablature player that brings ASCII tabs to life with real sam
 
 ---
 
-## ✨ Features
+## Features
 
 | Feature | Description |
 |---|---|
-| 🎵 **Paste & play** | Paste raw guitar tab text and hear it played back instantly |
-| 🔍 **Auto-detect tuning** | Reads string labels (`e\|`, `B\|`, `G\|`, etc.) to automatically detect tuning |
-| 🎛️ **Tuning selector** | Auto-detected, presets (Standard, Drop D, DADGAD, Open G/D/E/A), and custom |
-| 🎸 **Acoustic & electric** | Toggle between real guitar sample sets |
-| 🔨 **Technique support** | Hammer-ons, pull-offs, slides up & down with proper velocity and timing |
-| ⏯️ **Player controls** | Play/pause, prev/next chord, clickable progress bar with seeking |
-| ⚡ **Speed control** | Adjustable playback speed from 0.25x to 2.0x |
-| ⌨️ **Keyboard shortcuts** | Space (play/pause), arrow keys (prev/next chord) |
-| 📊 **Tab display** | Real-time playback highlighting with auto-scroll |
-| 📋 **Example tabs** | Dropdown with two built-in example tabs to try immediately |
-| 📱 **Responsive** | Works on desktop and mobile |
+| **Paste & play** | Paste raw guitar tab text and hear it played back instantly |
+| **Auto-detect tuning** | Reads string labels (`e\|`, `B\|`, `G\|`, etc.) to automatically detect tuning |
+| **Tuning selector** | Auto-detected, presets (Standard, Drop D, DADGAD, Open G/D/E/A), and custom |
+| **Acoustic & electric** | Toggle between real guitar sample sets |
+| **Technique support** | Hammer-ons, pull-offs, slides up & down with proper velocity and timing |
+| **Player controls** | Play/pause, prev/next chord, clickable progress bar with seeking |
+| **Speed control** | Adjustable playback speed from 0.25x to 2.0x |
+| **Keyboard shortcuts** | Space (play/pause), arrow keys (prev/next chord) |
+| **Tab display** | Real-time playback highlighting with auto-scroll |
+| **Example tabs** | Dropdown with two built-in example tabs to try immediately |
+| **Responsive** | Works on desktop and mobile |
 
 ---
 
-## 🎼 Tab Format
+## Tab Format
 
 Supports standard ASCII guitar tablature:
 
@@ -73,7 +73,7 @@ E|0--0-----0-----0-------|
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 | Technology | Purpose |
 |---|---|
@@ -83,7 +83,7 @@ E|0--0-----0-----0-------|
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 src/
@@ -103,7 +103,7 @@ src/
 
 ---
 
-## 🚀 How to Run
+## How to Run
 
 ### Prerequisites
 
