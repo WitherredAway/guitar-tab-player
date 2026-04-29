@@ -257,12 +257,13 @@ function parseBlock(block, tuning) {
   const events = [];
   let pos = 0;
 
-  // We'll track the position in actual "columns" which map to time steps.
-  // Each character position is one time unit.
+  // Track columns consumed by multi-digit frets per string
+  const consumed = new Array(numStrings).fill(0);
+
   for (let col = 0; col < maxLen; col++) {
-    // Check if this column has any fret numbers
     let hasContent = false;
     for (let s = 0; s < numStrings; s++) {
+      if (col < consumed[s]) continue;
       const ch = contents[s][col] || '-';
       if (/\d/.test(ch)) {
         hasContent = true;
@@ -271,35 +272,28 @@ function parseBlock(block, tuning) {
     }
 
     if (!hasContent) {
-      // Check for measure separator
-      if (contents.every(c => (c[col] || '') === '|')) {
-        // measure boundary, just increment position
-      }
       pos++;
       continue;
     }
 
-    // Parse each string at this column
     for (let s = 0; s < numStrings; s++) {
+      if (col < consumed[s]) continue;
       const line = contents[s];
       const ch = line[col] || '-';
 
       if (!/\d/.test(ch)) continue;
 
-      // Read full fret number (could be multi-digit like 10, 12)
       let fretStr = ch;
       let endCol = col + 1;
       while (endCol < line.length && /\d/.test(line[endCol])) {
         fretStr += line[endCol];
         endCol++;
       }
+      consumed[s] = endCol;
 
       const fret = parseInt(fretStr, 10);
 
-      // Look for technique marker AFTER the fret number
       const technique = detectTechnique(line, endCol);
-
-      // Look for technique marker BEFORE this fret (means this note is the TARGET)
       const prevTechnique = detectPrevTechnique(line, col);
 
       const event = {
@@ -310,7 +304,6 @@ function parseBlock(block, tuning) {
         openNote: tuning[s] || (block.labels[s]),
       };
 
-      // For techniques, find the connected fret
       if (technique) {
         const nextFret = findNextFret(line, endCol);
         if (nextFret !== null) {

@@ -85,8 +85,7 @@
     if (adjustedCol > 0) {
       segments.push({ text: content.substring(0, adjustedCol), active: false });
     }
-    // Highlight a small window around the active column
-    const highlightEnd = Math.min(adjustedCol + 2, content.length);
+    const highlightEnd = Math.min(adjustedCol + 1, content.length);
     segments.push({ text: content.substring(adjustedCol, highlightEnd), active: true });
     if (highlightEnd < content.length) {
       segments.push({ text: content.substring(highlightEnd), active: false });
