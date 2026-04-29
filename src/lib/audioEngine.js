@@ -113,7 +113,7 @@ export function createAudioEngine() {
    * @param {number} [duration=0.5] - Note duration in seconds
    * @param {number[]} [stringVolumes] - Per-string volume multipliers (0–1)
    */
-  function playNotes(notes, tuning, duration = 0.5, stringVolumes) {
+  function playNotes(notes, tuning, duration = 0.5, stringVolumes, nextStepMs) {
     if (!sampler || !isLoaded) return;
 
     for (const note of notes) {
@@ -134,7 +134,7 @@ export function createAudioEngine() {
           if (note.targetFret != null) {
             const targetPitch = fretToPitch(note.openNote, note.targetFret, note.string, tuning.length);
             sampler.triggerAttack(pitch, undefined, 0.7 * vol);
-            const slideTime = Math.min(duration * 0.4, 0.2);
+            const slideTime = nextStepMs ? nextStepMs / 1000 : Math.min(duration * 0.4, 0.2);
             setTimeout(() => {
               if (sampler && isLoaded) {
                 sampler.triggerAttack(targetPitch, undefined, 0.65 * vol);
