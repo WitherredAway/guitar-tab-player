@@ -109,18 +109,7 @@
     const firstLine = rawLines[0]?.[0] || '';
     const pipeIdx = firstLine.indexOf('|');
     const contentCol = Math.max(0, clickedCol - (pipeIdx + 1));
-
-    // Find the nearest timeline entry at or after the clicked position
-    let closest = 0;
-    let minDist = Infinity;
-    for (let i = 0; i < timeline.length; i++) {
-      const dist = Math.abs(timeline[i].position - contentCol);
-      if (dist < minDist) {
-        minDist = dist;
-        closest = i;
-      }
-    }
-    onseek(closest);
+    onseek(contentCol);
   }
 
   function startEditing() {

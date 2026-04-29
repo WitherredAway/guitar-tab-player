@@ -10,7 +10,7 @@
 
   // State
   let rawTabText = $state('');
-  let parsedData = $state({ tuning: [], timeline: [], rawLines: [] });
+  let parsedData = $state({ tuning: [], timeline: [], rawLines: [], totalColumns: 0 });
   let detectedTuning = $state([]);
   let activeTuning = $state([]);
   let guitarType = $state('acoustic');
@@ -46,6 +46,7 @@
     // Reset playback
     handlePause();
     currentIndex = 0;
+    activePosition = 0;
 
     // Auto-load instrument if not loaded
     if (result.timeline.length > 0 && !isLoaded) {
@@ -74,12 +75,31 @@
   }
 
   // Playback controls
+  // Find the timeline index for a given column position (or the next note at/after it)
+  function timelineIndexAtOrAfter(pos) {
+    for (let i = 0; i < parsedData.timeline.length; i++) {
+      if (parsedData.timeline[i].position >= pos) return i;
+    }
+    return parsedData.timeline.length;
+  }
+
+  // Play notes at the current activePosition if there's a note there
+  function playAtPosition() {
+    const idx = parsedData.timeline.findIndex(c => c.position === activePosition);
+    if (idx >= 0) {
+      currentIndex = idx;
+      engine.playNotes(parsedData.timeline[idx].notes, activeTuning, 0.4, stringVolumes);
+    }
+  }
+
   function handlePlay() {
     if (parsedData.timeline.length === 0 || !isLoaded) return;
 
-    // If at the end, restart from beginning
+    // Find the next note at or after current position
+    currentIndex = timelineIndexAtOrAfter(activePosition);
     if (currentIndex >= parsedData.timeline.length) {
       currentIndex = 0;
+      activePosition = 0;
     }
 
     isPlaying = true;
@@ -140,22 +160,14 @@
 
   function handlePrev() {
     handlePause();
-    currentIndex = Math.max(0, currentIndex - 1);
-    if (parsedData.timeline.length > 0 && currentIndex < parsedData.timeline.length) {
-      const column = parsedData.timeline[currentIndex];
-      activePosition = column.position;
-      engine.playNotes(column.notes, activeTuning, 0.4, stringVolumes);
-    }
+    activePosition = Math.max(0, activePosition - 1);
+    playAtPosition();
   }
 
   function handleNext() {
     handlePause();
-    currentIndex = Math.min(parsedData.timeline.length - 1, currentIndex + 1);
-    if (parsedData.timeline.length > 0 && currentIndex < parsedData.timeline.length) {
-      const column = parsedData.timeline[currentIndex];
-      activePosition = column.position;
-      engine.playNotes(column.notes, activeTuning, 0.4, stringVolumes);
-    }
+    activePosition = Math.min(parsedData.totalColumns - 1, activePosition + 1);
+    playAtPosition();
   }
 
   function handleSpeedChange(newSpeed) {
@@ -168,34 +180,22 @@
     engine.setVolume(db);
   }
 
-  function handleSeek(index) {
+  function handleSeek(pos) {
     handlePause();
-    currentIndex = index;
-    if (parsedData.timeline.length > 0 && currentIndex < parsedData.timeline.length) {
-      const column = parsedData.timeline[currentIndex];
-      activePosition = column.position;
-      engine.playNotes(column.notes, activeTuning, 0.4, stringVolumes);
-    }
+    activePosition = pos;
+    playAtPosition();
   }
 
   function handleFirst() {
     handlePause();
-    currentIndex = 0;
-    if (parsedData.timeline.length > 0) {
-      const column = parsedData.timeline[0];
-      activePosition = column.position;
-      engine.playNotes(column.notes, activeTuning, 0.4, stringVolumes);
-    }
+    activePosition = 0;
+    playAtPosition();
   }
 
   function handleLast() {
     handlePause();
-    currentIndex = parsedData.timeline.length - 1;
-    if (parsedData.timeline.length > 0) {
-      const column = parsedData.timeline[currentIndex];
-      activePosition = column.position;
-      engine.playNotes(column.notes, activeTuning, 0.4, stringVolumes);
-    }
+    activePosition = parsedData.totalColumns - 1;
+    playAtPosition();
   }
 
   function handleStringVolumeChange(index, vol) {
@@ -258,8 +258,8 @@
     <section class="player-section">
       <PlayerControls
         {isPlaying}
-        {currentIndex}
-        totalSteps={parsedData.timeline.length}
+        currentPosition={activePosition}
+        totalColumns={parsedData.totalColumns}
         {speed}
         {isLoaded}
         onplay={handlePlay}

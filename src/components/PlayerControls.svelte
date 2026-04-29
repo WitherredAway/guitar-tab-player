@@ -6,8 +6,8 @@
 
   /** @type {{
    *   isPlaying: boolean,
-   *   currentIndex: number,
-   *   totalSteps: number,
+   *   currentPosition: number,
+   *   totalColumns: number,
    *   speed: number,
    *   isLoaded: boolean,
    *   onplay: () => void,
@@ -17,14 +17,14 @@
    *   onfirst: () => void,
    *   onlast: () => void,
    *   onspeedchange: (speed: number) => void,
-   *   onseek: (index: number) => void,
+   *   onseek: (position: number) => void,
    *   volume: number,
    *   onvolumechange: (volume: number) => void,
    * }} */
   let {
     isPlaying = false,
-    currentIndex = 0,
-    totalSteps = 0,
+    currentPosition = 0,
+    totalColumns = 0,
     speed = 1.0,
     isLoaded = false,
     onplay = () => {},
@@ -40,7 +40,7 @@
   } = $props();
 
   let progressPercent = $derived(
-    totalSteps > 0 ? (currentIndex / (totalSteps - 1)) * 100 : 0
+    totalColumns > 0 ? (currentPosition / (totalColumns - 1)) * 100 : 0
   );
 
   function togglePlay() {
@@ -105,14 +105,14 @@
 
 <svelte:window onkeydown={handleKeydown} />
 
-<div class="player-controls" class:disabled={!isLoaded || totalSteps === 0}>
+<div class="player-controls" class:disabled={!isLoaded || totalColumns === 0}>
   <!-- Progress bar -->
   <input
     type="range"
     class="styled-slider progress-slider"
     min="0"
-    max={Math.max(totalSteps - 1, 0)}
-    value={currentIndex}
+    max={Math.max(totalColumns - 1, 0)}
+    value={currentPosition}
     oninput={(e) => onseek(parseInt(e.target.value))}
     aria-label="Playback position"
     style="background: linear-gradient(to right, var(--accent) {progressPercent}%, var(--bg-input) {progressPercent}%);"
@@ -121,9 +121,9 @@
   <div class="controls-row">
     <!-- Position display -->
     <div class="position-display">
-      <span class="current">{currentIndex + 1}</span>
+      <span class="current">{currentPosition + 1}</span>
       <span class="separator">/</span>
-      <span class="total">{totalSteps}</span>
+      <span class="total">{totalColumns}</span>
     </div>
 
     <!-- Transport controls -->
@@ -131,7 +131,7 @@
       <button
         class="control-btn"
         onclick={onfirst}
-        disabled={!isLoaded || totalSteps === 0}
+        disabled={!isLoaded || totalColumns === 0}
         title="First"
         aria-label="Go to first"
       >
@@ -143,7 +143,7 @@
       <button
         class="control-btn"
         onclick={onprev}
-        disabled={!isLoaded || totalSteps === 0}
+        disabled={!isLoaded || totalColumns === 0}
         title="Previous (←)"
         aria-label="Previous chord"
       >
@@ -155,7 +155,7 @@
       <button
         class="control-btn play-btn"
         onclick={togglePlay}
-        disabled={!isLoaded || totalSteps === 0}
+        disabled={!isLoaded || totalColumns === 0}
         title="Play/Pause (Space)"
         aria-label={isPlaying ? 'Pause' : 'Play'}
       >
@@ -173,7 +173,7 @@
       <button
         class="control-btn"
         onclick={onnext}
-        disabled={!isLoaded || totalSteps === 0}
+        disabled={!isLoaded || totalColumns === 0}
         title="Next (→)"
         aria-label="Next chord"
       >
@@ -185,7 +185,7 @@
       <button
         class="control-btn"
         onclick={onlast}
-        disabled={!isLoaded || totalSteps === 0}
+        disabled={!isLoaded || totalColumns === 0}
         title="Last"
         aria-label="Go to last"
       >

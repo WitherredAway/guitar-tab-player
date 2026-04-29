@@ -124,7 +124,10 @@ export function parseTab(rawText) {
   // Group timeline into columns (simultaneous events at same position)
   const grouped = groupByPosition(timeline);
 
-  return { tuning, timeline: grouped, rawLines };
+  // Total columns = length of first content string in first merged block
+  const totalColumns = merged.length > 0 ? Math.max(...merged[0].contents.map(s => s.length)) : 0;
+
+  return { tuning, timeline: grouped, rawLines, totalColumns };
 }
 
 /**
