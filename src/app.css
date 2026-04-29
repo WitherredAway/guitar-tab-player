@@ -1,24 +1,24 @@
 :root {
-  --bg: #0f0f0f;
-  --bg-surface: #1a1a2e;
-  --bg-surface-hover: #22223a;
-  --bg-input: #16162a;
-  --text: #e0e0e0;
-  --text-muted: #888;
-  --text-heading: #f5f5f5;
-  --accent: #7c3aed;
-  --accent-hover: #6d28d9;
-  --accent-glow: rgba(124, 58, 237, 0.3);
-  --border: #2a2a3e;
-  --border-focus: #7c3aed;
-  --success: #22c55e;
-  --warning: #f59e0b;
-  --error: #ef4444;
+  --bg: #0a0a0a;
+  --bg-surface: #17141f;
+  --bg-surface-hover: #1f1b2a;
+  --bg-input: #13111a;
+  --text: #c9b8e8;
+  --text-muted: #7a6b9a;
+  --text-heading: #e8dff5;
+  --accent: #d4bbff;
+  --accent-hover: #c5a6ff;
+  --accent-glow: rgba(212, 187, 255, 0.15);
+  --border: #2a2040;
+  --border-focus: #d4bbff;
+  --success: #a3e4b8;
+  --warning: #f0d4a0;
+  --error: #f0a0a0;
   --mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', ui-monospace, Consolas, monospace;
   --sans: 'Inter', system-ui, -apple-system, sans-serif;
   --radius: 8px;
   --radius-lg: 12px;
-  --shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  --shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
 }
 
 *,
@@ -50,4 +50,66 @@ button {
 
 input, select, textarea {
   font-family: var(--sans);
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-input);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent);
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) var(--bg-input);
+}
+
+/* Unified slider style */
+input[type='range'].styled-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 6px;
+  border-radius: 3px;
+  outline: none;
+  cursor: pointer;
+  transition: height 0.15s;
+  background: var(--bg-input);
+}
+
+input[type='range'].styled-slider:hover {
+  height: 8px;
+}
+
+input[type='range'].styled-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  background: var(--accent);
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
+}
+
+input[type='range'].styled-slider::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  background: var(--accent);
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
 }
