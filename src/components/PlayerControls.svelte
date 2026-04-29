@@ -47,6 +47,30 @@
     onspeedchange(parseFloat(e.target.value));
   }
 
+  function handleSpeedInput(e) {
+    const val = parseFloat(e.target.value);
+    if (!isNaN(val) && val >= 0) {
+      onspeedchange(val);
+    }
+  }
+
+  function handleSpeedBlur(e) {
+    const val = parseFloat(e.target.value);
+    if (isNaN(val) || val < 0) {
+      e.target.value = speed.toFixed(2);
+    }
+  }
+
+  function decrementSpeed() {
+    const newSpeed = Math.max(0, Math.round((speed - 0.1) * 100) / 100);
+    onspeedchange(newSpeed);
+  }
+
+  function incrementSpeed() {
+    const newSpeed = Math.round((speed + 0.1) * 100) / 100;
+    onspeedchange(newSpeed);
+  }
+
   function handleProgressClick(e) {
     if (totalSteps === 0) return;
     const rect = e.currentTarget.getBoundingClientRect();
@@ -148,16 +172,26 @@
 
     <!-- Speed control -->
     <div class="speed-control">
-      <label for="speed-slider">{speed.toFixed(2)}x</label>
+      <input
+        class="speed-input"
+        type="text"
+        value={speed.toFixed(2)}
+        oninput={handleSpeedInput}
+        onblur={handleSpeedBlur}
+        aria-label="Speed multiplier"
+      />
+      <span class="speed-x">x</span>
+      <button class="speed-btn" onclick={decrementSpeed} aria-label="Decrease speed">-</button>
       <input
         id="speed-slider"
         type="range"
-        min="0.25"
-        max="2"
+        min="0.1"
+        max="4"
         step="0.05"
-        value={speed}
+        value={Math.min(4, speed)}
         oninput={handleSpeedChange}
       />
+      <button class="speed-btn" onclick={incrementSpeed} aria-label="Increase speed">+</button>
     </div>
   </div>
 </div>
@@ -268,12 +302,50 @@
     justify-content: flex-end;
   }
 
-  .speed-control label {
+  .speed-input {
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    color: var(--text-heading);
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    width: 42px;
+    padding: 2px 4px;
+    text-align: right;
+    outline: none;
+  }
+
+  .speed-input:focus {
+    border-color: var(--border-focus);
+  }
+
+  .speed-x {
     font-family: var(--mono);
     font-size: 0.8rem;
     color: var(--text-muted);
-    min-width: 42px;
-    text-align: right;
+  }
+
+  .speed-btn {
+    background: var(--bg-surface-hover);
+    border: 1px solid var(--border);
+    color: var(--text-heading);
+    width: 24px;
+    height: 24px;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: 0;
+    transition: background 0.2s, border-color 0.2s;
+  }
+
+  .speed-btn:hover {
+    background: var(--accent);
+    color: #1a1625;
+    border-color: var(--accent);
   }
 
   .speed-control input[type='range'] {
