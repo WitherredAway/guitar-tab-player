@@ -99,12 +99,12 @@
     // Calculate time until next column (4x slower base so old 0.25x = new 1x)
     let intervalMs = 600 / speed;
 
-    // Use position gaps for more natural timing
+    // Use position gaps for more natural timing, capped to avoid long pauses between parts
     if (currentIndex + 1 < parsedData.timeline.length) {
       const currentPos = column.position;
       const nextPos = parsedData.timeline[currentIndex + 1].position;
       const gap = nextPos - currentPos;
-      intervalMs = Math.max(240, gap * 200) / speed;
+      intervalMs = Math.max(240, Math.min(gap * 200, 800)) / speed;
     }
 
     currentIndex++;
@@ -153,6 +153,24 @@
     handlePause();
     currentIndex = index;
     if (parsedData.timeline.length > 0 && currentIndex < parsedData.timeline.length) {
+      const column = parsedData.timeline[currentIndex];
+      engine.playNotes(column.notes, activeTuning, 0.4, stringVolumes);
+    }
+  }
+
+  function handleFirst() {
+    handlePause();
+    currentIndex = 0;
+    if (parsedData.timeline.length > 0) {
+      const column = parsedData.timeline[0];
+      engine.playNotes(column.notes, activeTuning, 0.4, stringVolumes);
+    }
+  }
+
+  function handleLast() {
+    handlePause();
+    currentIndex = parsedData.timeline.length - 1;
+    if (parsedData.timeline.length > 0) {
       const column = parsedData.timeline[currentIndex];
       engine.playNotes(column.notes, activeTuning, 0.4, stringVolumes);
     }
@@ -208,6 +226,7 @@
           {currentIndex}
           timeline={parsedData.timeline}
           {isPlaying}
+          onseek={handleSeek}
         />
       </section>
     {/if}
@@ -223,6 +242,8 @@
         onpause={handlePause}
         onprev={handlePrev}
         onnext={handleNext}
+        onfirst={handleFirst}
+        onlast={handleLast}
         onspeedchange={handleSpeedChange}
         onseek={handleSeek}
       />
