@@ -9,6 +9,7 @@
   import StringVolumes from './components/StringVolumes.svelte';
 
   // State
+  let rawTabText = $state('');
   let parsedData = $state({ tuning: [], timeline: [], rawLines: [], totalColumns: 0, colMaps: [] });
   let detectedTuning = $state([]);
   let activeTuning = $state([]);
@@ -27,6 +28,7 @@
   const engine = createAudioEngine();
 
   function handleTabInput(text) {
+    rawTabText = text;
     const result = parseTab(text);
     parsedData = result;
     detectedTuning = result.tuning;
