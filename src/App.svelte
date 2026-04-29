@@ -9,8 +9,7 @@
   import StringVolumes from './components/StringVolumes.svelte';
 
   // State
-  let rawTabText = $state('');
-  let parsedData = $state({ tuning: [], timeline: [], rawLines: [], totalColumns: 0 });
+  let parsedData = $state({ tuning: [], timeline: [], rawLines: [], totalColumns: 0, colMaps: [] });
   let detectedTuning = $state([]);
   let activeTuning = $state([]);
   let guitarType = $state('acoustic');
@@ -27,9 +26,7 @@
   // Audio engine
   const engine = createAudioEngine();
 
-  // Parse tab when input changes
   function handleTabInput(text) {
-    rawTabText = text;
     const result = parseTab(text);
     parsedData = result;
     detectedTuning = result.tuning;
@@ -74,8 +71,6 @@
     activeTuning = tuning;
   }
 
-  // Playback controls
-  // Find the timeline index for a given column position (or the next note at/after it)
   function timelineIndexAtOrAfter(pos) {
     for (let i = 0; i < parsedData.timeline.length; i++) {
       if (parsedData.timeline[i].position >= pos) return i;
@@ -83,7 +78,6 @@
     return parsedData.timeline.length;
   }
 
-  // Play notes at the current activePosition if there's a note there
   function playAtPosition() {
     const idx = parsedData.timeline.findIndex(c => c.position === activePosition);
     if (idx >= 0) {
@@ -199,7 +193,8 @@
   }
 
   function handleStringVolumeChange(index, vol) {
-    stringVolumes = stringVolumes.map((v, i) => i === index ? vol : v);
+    stringVolumes[index] = vol;
+    stringVolumes = stringVolumes;
   }
 </script>
 
@@ -245,9 +240,9 @@
       <section class="display-section">
         <TabDisplay
           rawLines={parsedData.rawLines}
-          {currentIndex}
           {activePosition}
-          timeline={parsedData.timeline}
+          totalColumns={parsedData.totalColumns}
+          colMaps={parsedData.colMaps}
           {isPlaying}
           onseek={handleSeek}
           onedit={handleTabInput}
