@@ -1,30 +1,53 @@
-# Guitar Tab Player
+<div align="center">
 
-A web-based guitar tablature player built with Svelte 5 and Tone.js. Paste any ASCII guitar tab, and it plays it back with real sampled guitar sounds — complete with hammer-ons, pull-offs, slides, and more.
+# 🎸 Guitar Tab Player
 
-**Website: https://witherredaway.github.io/guitar-tabs-player/**
+### Paste. Play. Practice.
 
-## Screenshots
+A web-based guitar tablature player that brings ASCII tabs to life with real sampled guitar sounds.
+
+[![Svelte](https://img.shields.io/badge/Svelte_5-FF3E00?style=for-the-badge&logo=svelte&logoColor=white)](https://svelte.dev/)
+[![Tone.js](https://img.shields.io/badge/Tone.js-000000?style=for-the-badge&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJ3aGl0ZSI+PHBhdGggZD0iTTEyIDNWMTMuNTVBNCA0IDAgMSAwIDE0IDEzVjdINDBWM0gxMloiLz48L3N2Zz4=&logoColor=white)](https://tonejs.github.io/)
+[![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vite.dev/)
+[![GitHub Pages](https://img.shields.io/badge/GitHub_Pages-222222?style=for-the-badge&logo=githubpages&logoColor=white)](https://witherredaway.github.io/guitar-tabs-player/)
+
+**[🌐 Open the Website](https://witherredaway.github.io/guitar-tabs-player/)**
+
+</div>
+
+---
+
+## 📸 Screenshots
+
+<div align="center">
 
 | Paste your tab | Tab loaded & ready to play |
 |---|---|
 | ![Empty state](docs/screenshots/empty-state.png) | ![Tab loaded](docs/screenshots/tab-loaded.png) |
 
-## Features
+</div>
 
-- **Paste & play** — paste raw guitar tab text and hear it played back instantly
-- **Auto-detect tuning** — reads string labels (`e|`, `B|`, `G|`, `D|`, `A|`, `E|`, etc.) to automatically detect tuning
-- **Tuning selector** — dropdown with auto-detected tuning, common presets (Standard, Drop D, DADGAD, Open G/D/E/A, Half Step Down), and a custom option with individual string note selectors
-- **Acoustic & electric** — toggle between real guitar sample sets
-- **Technique support** — plays hammer-ons (`h`), pull-offs (`p`), slides up (`/`) and down (`\`) with appropriate velocity and timing
-- **Player controls** — play/pause, previous/next chord navigation, clickable progress bar with seeking
-- **Speed control** — adjustable playback speed from 0.25x to 2.0x
-- **Keyboard shortcuts** — Space (play/pause), Left/Right arrows (prev/next chord)
-- **Tab display** — visual rendering of parsed tab with real-time playback highlighting and auto-scroll
-- **Example tabs** — dropdown with two built-in example tabs to try immediately
-- **Responsive design** — works on desktop and mobile
+---
 
-## Tab Format
+## ✨ Features
+
+| Feature | Description |
+|---|---|
+| 🎵 **Paste & play** | Paste raw guitar tab text and hear it played back instantly |
+| 🔍 **Auto-detect tuning** | Reads string labels (`e\|`, `B\|`, `G\|`, etc.) to automatically detect tuning |
+| 🎛️ **Tuning selector** | Auto-detected, presets (Standard, Drop D, DADGAD, Open G/D/E/A), and custom |
+| 🎸 **Acoustic & electric** | Toggle between real guitar sample sets |
+| 🔨 **Technique support** | Hammer-ons, pull-offs, slides up & down with proper velocity and timing |
+| ⏯️ **Player controls** | Play/pause, prev/next chord, clickable progress bar with seeking |
+| ⚡ **Speed control** | Adjustable playback speed from 0.25x to 2.0x |
+| ⌨️ **Keyboard shortcuts** | Space (play/pause), arrow keys (prev/next chord) |
+| 📊 **Tab display** | Real-time playback highlighting with auto-scroll |
+| 📋 **Example tabs** | Dropdown with two built-in example tabs to try immediately |
+| 📱 **Responsive** | Works on desktop and mobile |
+
+---
+
+## 🎼 Tab Format
 
 Supports standard ASCII guitar tablature:
 
@@ -37,23 +60,30 @@ A|-----------------------|
 E|0--0-----0-----0-------|
 ```
 
-**Supported techniques:**
-- `h` — hammer-on (e.g., `5h8`)
-- `p` — pull-off (e.g., `8p5`)
-- `/` — slide up (e.g., `2/4`)
-- `\` — slide down (e.g., `5\3`)
-- `-` — sustain / rest
-- `|` — measure separator
+| Symbol | Technique | Example |
+|--------|-----------|---------|
+| `h` | Hammer-on | `5h8` |
+| `p` | Pull-off | `8p5` |
+| `/` | Slide up | `2/4` |
+| `\` | Slide down | `5\3` |
+| `-` | Sustain / rest | `---` |
+| `\|` | Measure separator | `\|` |
 
-Multi-digit fret numbers (10, 12, etc.) are supported. Each block of 6 strings represents a sequential section of the song — blocks are played one after another, not simultaneously.
+> Multi-digit fret numbers (10, 12, etc.) are supported. Each block of 6 strings is a sequential section — blocks are played one after another, not simultaneously.
 
-## Tech Stack
+---
 
-- **[Svelte 5](https://svelte.dev/)** — reactive UI framework with Runes (`$state`, `$derived`, `$effect`)
-- **[Vite](https://vite.dev/)** — fast build tool with hot module replacement
-- **[Tone.js](https://tonejs.github.io/)** — Web Audio API library with real guitar samplers
+## 🛠️ Tech Stack
 
-## Project Structure
+| Technology | Purpose |
+|---|---|
+| [**Svelte 5**](https://svelte.dev/) | Reactive UI framework with Runes (`$state`, `$derived`, `$effect`) |
+| [**Vite**](https://vite.dev/) | Fast build tool with hot module replacement |
+| [**Tone.js**](https://tonejs.github.io/) | Web Audio API library with real guitar samplers |
+
+---
+
+## 📁 Project Structure
 
 ```
 src/
@@ -71,7 +101,9 @@ src/
     └── TabDisplay.svelte         # Visual tab rendering with highlighting
 ```
 
-## How to Run
+---
+
+## 🚀 How to Run
 
 ### Prerequisites
 
@@ -111,4 +143,3 @@ The project includes a GitHub Actions workflow for automatic deployment to GitHu
 1. Go to repo **Settings → Pages → Source**
 2. Select **GitHub Actions**
 3. The site will auto-deploy on every push to `main`
-4. Live at: **https://witherredaway.github.io/guitar-tabs-player/**
