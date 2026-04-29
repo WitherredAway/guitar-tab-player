@@ -20,6 +20,7 @@
   let isLoaded = $state(false);
   let isLoading = $state(false);
   let playInterval = $state(null);
+  let activePosition = $state(0);
   let stringVolumes = $state([1, 1, 1, 1, 1, 1]);
   let masterVolume = $state(0.8);
 
@@ -94,28 +95,37 @@
     }
 
     const column = parsedData.timeline[currentIndex];
+    activePosition = column.position;
     const noteDuration = 1.6 / speed;
     engine.playNotes(column.notes, activeTuning, noteDuration, stringVolumes);
 
-    // Calculate time until next column (4x slower base so old 0.25x = new 1x)
-    let intervalMs = 600 / speed;
-
-    // Use position gaps for more natural timing
-    if (currentIndex + 1 < parsedData.timeline.length) {
-      const currentPos = column.position;
-      const nextPos = parsedData.timeline[currentIndex + 1].position;
-      const gap = nextPos - currentPos;
-      intervalMs = Math.max(240, gap * 200) / speed;
+    if (currentIndex + 1 >= parsedData.timeline.length) {
+      currentIndex++;
+      isPlaying = false;
+      return;
     }
+
+    const nextPos = parsedData.timeline[currentIndex + 1].position;
+    const gap = nextPos - column.position;
+    const stepMs = Math.max(240, 200) / speed;
 
     currentIndex++;
 
-    if (currentIndex < parsedData.timeline.length) {
-      playInterval = setTimeout(() => {
-        playCurrentAndAdvance();
-      }, intervalMs);
+    if (gap <= 1) {
+      playInterval = setTimeout(() => playCurrentAndAdvance(), stepMs);
     } else {
-      isPlaying = false;
+      let step = 1;
+      function advanceStep() {
+        if (!isPlaying) return;
+        if (step < gap) {
+          activePosition = column.position + step;
+          step++;
+          playInterval = setTimeout(advanceStep, stepMs);
+        } else {
+          playCurrentAndAdvance();
+        }
+      }
+      playInterval = setTimeout(advanceStep, stepMs);
     }
   }
 
@@ -133,6 +143,7 @@
     currentIndex = Math.max(0, currentIndex - 1);
     if (parsedData.timeline.length > 0 && currentIndex < parsedData.timeline.length) {
       const column = parsedData.timeline[currentIndex];
+      activePosition = column.position;
       engine.playNotes(column.notes, activeTuning, 0.4, stringVolumes);
     }
   }
@@ -142,6 +153,7 @@
     currentIndex = Math.min(parsedData.timeline.length - 1, currentIndex + 1);
     if (parsedData.timeline.length > 0 && currentIndex < parsedData.timeline.length) {
       const column = parsedData.timeline[currentIndex];
+      activePosition = column.position;
       engine.playNotes(column.notes, activeTuning, 0.4, stringVolumes);
     }
   }
@@ -161,6 +173,7 @@
     currentIndex = index;
     if (parsedData.timeline.length > 0 && currentIndex < parsedData.timeline.length) {
       const column = parsedData.timeline[currentIndex];
+      activePosition = column.position;
       engine.playNotes(column.notes, activeTuning, 0.4, stringVolumes);
     }
   }
@@ -170,6 +183,7 @@
     currentIndex = 0;
     if (parsedData.timeline.length > 0) {
       const column = parsedData.timeline[0];
+      activePosition = column.position;
       engine.playNotes(column.notes, activeTuning, 0.4, stringVolumes);
     }
   }
@@ -179,6 +193,7 @@
     currentIndex = parsedData.timeline.length - 1;
     if (parsedData.timeline.length > 0) {
       const column = parsedData.timeline[currentIndex];
+      activePosition = column.position;
       engine.playNotes(column.notes, activeTuning, 0.4, stringVolumes);
     }
   }
@@ -231,6 +246,7 @@
         <TabDisplay
           rawLines={parsedData.rawLines}
           {currentIndex}
+          {activePosition}
           timeline={parsedData.timeline}
           {isPlaying}
           onseek={handleSeek}

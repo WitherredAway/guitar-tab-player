@@ -7,6 +7,7 @@
   /** @type {{
    *   rawLines: string[][],
    *   currentIndex: number,
+   *   activePosition: number,
    *   timeline: object[],
    *   isPlaying: boolean,
    *   onseek: (index: number) => void,
@@ -15,6 +16,7 @@
   let {
     rawLines = [],
     currentIndex = -1,
+    activePosition = 0,
     timeline = [],
     isPlaying = false,
     onseek = () => {},
@@ -49,16 +51,9 @@
     }
   });
 
-  /**
-   * Map a timeline index to its approximate column position in the raw text.
-   * This helps us highlight the correct column during playback.
-   */
-  function getActiveColumn() {
-    if (currentIndex < 0 || currentIndex >= timeline.length) return -1;
-    return timeline[currentIndex]?.position ?? -1;
-  }
-
-  let activeCol = $derived(getActiveColumn());
+  let activeCol = $derived(
+    currentIndex < 0 || currentIndex >= timeline.length ? -1 : activePosition
+  );
 
   /**
    * Render a tab line with column highlighting.
