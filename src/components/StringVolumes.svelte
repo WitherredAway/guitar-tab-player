@@ -85,11 +85,16 @@
     -webkit-appearance: none;
     appearance: none;
     width: 100%;
-    height: 4px;
+    height: 6px;
     background: var(--bg-input);
-    border-radius: 2px;
+    border-radius: 3px;
     outline: none;
     cursor: pointer;
+    transition: height 0.15s;
+  }
+
+  .volume-slider:hover {
+    height: 8px;
   }
 
   .volume-slider::-webkit-slider-thumb {
@@ -100,6 +105,7 @@
     background: var(--accent);
     border-radius: 50%;
     cursor: pointer;
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
   }
 
   .volume-slider::-moz-range-thumb {
@@ -109,6 +115,7 @@
     border-radius: 50%;
     border: none;
     cursor: pointer;
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
   }
 
   .volume-value {
