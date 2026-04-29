@@ -97,13 +97,15 @@ export function parseTab(rawText) {
   // Detect tuning from the first block's string labels
   const tuning = blocks[0].labels.slice();
 
-  // Parse each block into timeline events and concatenate
+  // Merge consecutive blocks with the same number of strings into one
+  const merged = mergeBlocks(blocks);
+
+  // Parse each merged block into timeline events and concatenate
   let timeline = [];
   const rawLines = [];
 
-  for (const block of blocks) {
+  for (const block of merged) {
     const blockEvents = parseBlock(block, tuning);
-    // Offset positions by current timeline length
     const offset = timeline.length;
     for (const event of blockEvents) {
       event.position += offset;
@@ -158,6 +160,44 @@ function extractBlocks(rawText) {
   }
 
   return blocks;
+}
+
+/**
+ * Merge consecutive blocks that have the same number of strings into one
+ * continuous block by concatenating their contents side by side.
+ */
+function mergeBlocks(blocks) {
+  if (blocks.length <= 1) return blocks;
+
+  const result = [];
+  let current = {
+    labels: blocks[0].labels.slice(),
+    contents: blocks[0].contents.slice(),
+    lines: blocks[0].lines.slice(),
+  };
+
+  for (let i = 1; i < blocks.length; i++) {
+    const next = blocks[i];
+
+    if (current.labels.length === next.labels.length) {
+      current.contents = current.contents.map((c, j) => c + next.contents[j]);
+      current.lines = current.lines.map((l, j) => {
+        const nextLine = next.lines[j];
+        const pipeIdx = nextLine.indexOf('|');
+        return l + nextLine.substring(pipeIdx + 1);
+      });
+    } else {
+      result.push(current);
+      current = {
+        labels: next.labels.slice(),
+        contents: next.contents.slice(),
+        lines: next.lines.slice(),
+      };
+    }
+  }
+  result.push(current);
+
+  return result;
 }
 
 /**
