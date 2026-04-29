@@ -2,13 +2,13 @@
 
 A web-based guitar tablature player built with Svelte 5 and Tone.js. Paste any ASCII guitar tab, and it plays it back with real sampled guitar sounds — complete with hammer-ons, pull-offs, slides, and more.
 
-**[Live Demo](https://witherredaway.github.io/guitar-tabs-player/)**
+**Website: https://witherredaway.github.io/guitar-tabs-player/**
 
 ## Screenshots
 
 | Paste your tab | Tab loaded & ready to play |
 |---|---|
-| ![Empty state](https://app.devin.ai/attachments/9986599e-a007-4e15-a5df-d0b3ff692495/readme-empty.png) | ![Tab loaded](https://app.devin.ai/attachments/42136d25-27fc-42c1-9627-4761f2441c48/readme-tab-loaded.png) |
+| ![Empty state](docs/screenshots/empty-state.png) | ![Tab loaded](docs/screenshots/tab-loaded.png) |
 
 ## Features
 
