@@ -109,39 +109,35 @@ export function createAudioEngine() {
    * @param {object[]} notes - Array of note events from the parser
    * @param {string[]} tuning - Current tuning array (low → high)
    * @param {number} [duration=0.5] - Note duration in seconds
+   * @param {number[]} [stringVolumes] - Per-string volume multipliers (0–1)
    */
-  function playNotes(notes, tuning, duration = 0.5) {
+  function playNotes(notes, tuning, duration = 0.5, stringVolumes) {
     if (!sampler || !isLoaded) return;
 
     for (const note of notes) {
       const pitch = fretToPitch(note.openNote, note.fret, note.string, tuning.length);
+      const vol = stringVolumes ? (stringVolumes[note.string] ?? 1) : 1;
 
       switch (note.technique) {
         case 'hammer-on':
-          // Hammer-on: slightly softer attack, quick onset
-          sampler.triggerAttackRelease(pitch, duration * 0.8, undefined, 0.6);
+          sampler.triggerAttackRelease(pitch, duration * 0.8, undefined, 0.6 * vol);
           break;
 
         case 'pull-off':
-          // Pull-off: softer, slightly shorter
-          sampler.triggerAttackRelease(pitch, duration * 0.7, undefined, 0.5);
+          sampler.triggerAttackRelease(pitch, duration * 0.7, undefined, 0.5 * vol);
           break;
 
         case 'slide-up':
         case 'slide-down': {
-          // Slide: start at current fret, glide to target
           if (note.targetFret != null) {
             const targetPitch = fretToPitch(note.openNote, note.targetFret, note.string, tuning.length);
-            // Play starting note
-            sampler.triggerAttack(pitch, undefined, 0.7);
-            // Schedule pitch bend to target
+            sampler.triggerAttack(pitch, undefined, 0.7 * vol);
             const slideTime = Math.min(duration * 0.4, 0.2);
             setTimeout(() => {
               if (sampler && isLoaded) {
-                sampler.triggerAttack(targetPitch, undefined, 0.65);
+                sampler.triggerAttack(targetPitch, undefined, 0.65 * vol);
               }
             }, slideTime * 1000);
-            // Release after full duration
             setTimeout(() => {
               if (sampler && isLoaded) {
                 sampler.triggerRelease(pitch);
@@ -149,14 +145,13 @@ export function createAudioEngine() {
               }
             }, duration * 1000);
           } else {
-            sampler.triggerAttackRelease(pitch, duration, undefined, 0.7);
+            sampler.triggerAttackRelease(pitch, duration, undefined, 0.7 * vol);
           }
           break;
         }
 
         default:
-          // Normal note
-          sampler.triggerAttackRelease(pitch, duration, undefined, 0.8);
+          sampler.triggerAttackRelease(pitch, duration, undefined, 0.8 * vol);
           break;
       }
     }

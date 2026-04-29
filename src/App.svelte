@@ -6,6 +6,7 @@
   import GuitarTypeSelector from './components/GuitarTypeSelector.svelte';
   import PlayerControls from './components/PlayerControls.svelte';
   import TabDisplay from './components/TabDisplay.svelte';
+  import StringVolumes from './components/StringVolumes.svelte';
 
   // State
   let rawTabText = $state('');
@@ -19,6 +20,7 @@
   let isLoaded = $state(false);
   let isLoading = $state(false);
   let playInterval = $state(null);
+  let stringVolumes = $state([1, 1, 1, 1, 1, 1]);
 
   // Audio engine
   const engine = createAudioEngine();
@@ -32,6 +34,11 @@
 
     if (result.tuning.length > 0 && activeTuning.length === 0) {
       activeTuning = result.tuning.slice();
+    }
+
+    // Resize string volumes to match number of strings
+    if (result.tuning.length > 0) {
+      stringVolumes = Array.from({ length: result.tuning.length }, (_, i) => stringVolumes[i] ?? 1);
     }
 
     // Reset playback
@@ -86,18 +93,18 @@
     }
 
     const column = parsedData.timeline[currentIndex];
-    const noteDuration = 0.4 / speed;
-    engine.playNotes(column.notes, activeTuning, noteDuration);
+    const noteDuration = 1.6 / speed;
+    engine.playNotes(column.notes, activeTuning, noteDuration, stringVolumes);
 
-    // Calculate time until next column
-    let intervalMs = 150 / speed; // base interval
+    // Calculate time until next column (4x slower base so old 0.25x = new 1x)
+    let intervalMs = 600 / speed;
 
     // Use position gaps for more natural timing
     if (currentIndex + 1 < parsedData.timeline.length) {
       const currentPos = column.position;
       const nextPos = parsedData.timeline[currentIndex + 1].position;
       const gap = nextPos - currentPos;
-      intervalMs = Math.max(60, gap * 50) / speed;
+      intervalMs = Math.max(240, gap * 200) / speed;
     }
 
     currentIndex++;
@@ -125,7 +132,7 @@
     currentIndex = Math.max(0, currentIndex - 1);
     if (parsedData.timeline.length > 0 && currentIndex < parsedData.timeline.length) {
       const column = parsedData.timeline[currentIndex];
-      engine.playNotes(column.notes, activeTuning, 0.4);
+      engine.playNotes(column.notes, activeTuning, 0.4, stringVolumes);
     }
   }
 
@@ -134,7 +141,7 @@
     currentIndex = Math.min(parsedData.timeline.length - 1, currentIndex + 1);
     if (parsedData.timeline.length > 0 && currentIndex < parsedData.timeline.length) {
       const column = parsedData.timeline[currentIndex];
-      engine.playNotes(column.notes, activeTuning, 0.4);
+      engine.playNotes(column.notes, activeTuning, 0.4, stringVolumes);
     }
   }
 
@@ -147,8 +154,12 @@
     currentIndex = index;
     if (parsedData.timeline.length > 0 && currentIndex < parsedData.timeline.length) {
       const column = parsedData.timeline[currentIndex];
-      engine.playNotes(column.notes, activeTuning, 0.4);
+      engine.playNotes(column.notes, activeTuning, 0.4, stringVolumes);
     }
+  }
+
+  function handleStringVolumeChange(index, vol) {
+    stringVolumes = stringVolumes.map((v, i) => i === index ? vol : v);
   }
 </script>
 
@@ -173,6 +184,14 @@
           onchange={handleGuitarTypeChange}
         />
       </div>
+
+      {#if activeTuning.length > 0}
+        <StringVolumes
+          tuning={activeTuning}
+          volumes={stringVolumes}
+          onchange={handleStringVolumeChange}
+        />
+      {/if}
 
       {#if isLoading}
         <div class="loading-notice">
