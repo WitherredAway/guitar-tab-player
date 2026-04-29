@@ -1,23 +1,22 @@
 <script>
   /**
-   * Visual tab display component.
-   * Renders the parsed tab with syntax highlighting and playback position indicator.
+   * Visual tab display with column highlighting, click-to-seek, and inline editing.
    */
 
   /** @type {{
    *   rawLines: string[][],
-   *   currentIndex: number,
    *   activePosition: number,
-   *   timeline: object[],
+   *   totalColumns: number,
+   *   colMaps: Array<{posToCol: number[], offset: number, totalPositions: number}>,
    *   isPlaying: boolean,
-   *   onseek: (index: number) => void,
+   *   onseek: (position: number) => void,
    *   onedit: (text: string) => void,
    * }} */
   let {
     rawLines = [],
-    currentIndex = -1,
-    activePosition = 0,
-    timeline = [],
+    activePosition = -1,
+    totalColumns = 0,
+    colMaps = [],
     isPlaying = false,
     onseek = () => {},
     onedit = () => {},
@@ -25,91 +24,77 @@
 
   let editing = $state(false);
   let editText = $state('');
-
   let displayRef = $state(null);
 
-  /**
-   * Build a highlighted version of the raw tab text.
-   * We map each column position to a timeline index so we can highlight
-   * the current column during playback.
-   */
-  let blocks = $derived.by(() => {
-    if (rawLines.length === 0) return [];
+  let hasContent = $derived(rawLines.length > 0 && rawLines.some(b => b.length > 0));
 
-    return rawLines.map((blockLines) => {
-      return blockLines.map((line) => line);
-    });
-  });
-
-  // Auto-scroll to keep current position visible
+  // Auto-scroll to keep highlighted column visible
   $effect(() => {
     if (isPlaying && displayRef) {
-      const highlighted = displayRef.querySelector('.col-active');
-      if (highlighted) {
-        highlighted.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-      }
+      const el = displayRef.querySelector('.col-active');
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
     }
   });
 
-  let activeCol = $derived(
-    currentIndex < 0 || currentIndex >= timeline.length ? -1 : activePosition
-  );
+  /**
+   * Get the character column for the active position within a given block index.
+   */
+  function getActiveCol(blockIndex) {
+    if (activePosition < 0 || !colMaps[blockIndex]) return -1;
+    const map = colMaps[blockIndex];
+    const localPos = activePosition - map.offset;
+    if (localPos < 0 || localPos >= map.totalPositions) return -1;
+    return map.posToCol[localPos] ?? -1;
+  }
 
   /**
-   * Render a tab line with column highlighting.
-   * Characters at the active column position get a highlight class.
+   * Split a tab line into segments: [before-highlight, highlight, after-highlight].
    */
-  function renderLine(line, blockOffset) {
-    if (activeCol < 0) return [{ text: line, active: false }];
+  function renderLine(line, blockIndex) {
+    const col = getActiveCol(blockIndex);
+    if (col < 0) return [{ text: line, active: false }];
 
-    // Find the pipe that starts content
     const pipeIdx = line.indexOf('|');
     if (pipeIdx < 0) return [{ text: line, active: false }];
 
     const label = line.substring(0, pipeIdx + 1);
     const content = line.substring(pipeIdx + 1);
+    const contentCol = col;
 
-    // The active column is relative to content (after first |)
-    const adjustedCol = activeCol - blockOffset;
-    if (adjustedCol < 0 || adjustedCol >= content.length) {
-      return [{ text: line, active: false }];
-    }
+    if (contentCol < 0 || contentCol >= content.length) return [{ text: line, active: false }];
 
-    const segments = [];
-    segments.push({ text: label, active: false });
-    if (adjustedCol > 0) {
-      segments.push({ text: content.substring(0, adjustedCol), active: false });
-    }
-    const highlightEnd = Math.min(adjustedCol + 1, content.length);
-    segments.push({ text: content.substring(adjustedCol, highlightEnd), active: true });
-    if (highlightEnd < content.length) {
-      segments.push({ text: content.substring(highlightEnd), active: false });
-    }
-
+    const segments = [{ text: label, active: false }];
+    if (contentCol > 0) segments.push({ text: content.substring(0, contentCol), active: false });
+    segments.push({ text: content.substring(contentCol, contentCol + 1), active: true });
+    if (contentCol + 1 < content.length) segments.push({ text: content.substring(contentCol + 1), active: false });
     return segments;
   }
 
-  function handleTabClick(e) {
-    if (timeline.length === 0) return;
+  function handleTabClick(e, blockIndex) {
+    if (totalColumns === 0 || !colMaps[blockIndex]) return;
     const pre = e.currentTarget;
-    const rect = pre.getBoundingClientRect();
-    const x = e.clientX - rect.left + pre.scrollLeft;
+    const x = e.clientX - pre.getBoundingClientRect().left + pre.scrollLeft;
 
-    // Measure actual character width using a temporary span
+    // Measure monospace char width
     const span = document.createElement('span');
     span.textContent = 'M';
-    span.style.visibility = 'hidden';
-    span.style.position = 'absolute';
-    span.style.font = getComputedStyle(pre).font;
+    span.style.cssText = `visibility:hidden;position:absolute;font:${getComputedStyle(pre).font}`;
     document.body.appendChild(span);
     const charWidth = span.getBoundingClientRect().width;
     span.remove();
 
-    const clickedCol = Math.floor(x / charWidth);
-    const firstLine = rawLines[0]?.[0] || '';
+    const clickedCharCol = Math.floor(x / charWidth);
+    const firstLine = rawLines[blockIndex]?.[0] || '';
     const pipeIdx = firstLine.indexOf('|');
-    const contentCol = Math.max(0, clickedCol - (pipeIdx + 1));
-    onseek(contentCol);
+    const contentCol = clickedCharCol - (pipeIdx + 1);
+
+    // Reverse-lookup: find the position whose character column is closest
+    const map = colMaps[blockIndex];
+    let bestPos = 0;
+    for (let p = 0; p < map.totalPositions; p++) {
+      if (map.posToCol[p] <= contentCol) bestPos = p;
+    }
+    onseek(Math.max(0, Math.min(map.offset + bestPos, totalColumns - 1)));
   }
 
   function startEditing() {
@@ -127,7 +112,7 @@
   }
 </script>
 
-{#if blocks.length > 0}
+{#if hasContent}
   <div class="tab-display" bind:this={displayRef}>
     <div class="tab-header">
       <span class="tab-label">Tab</span>
@@ -150,9 +135,9 @@
           bind:value={editText}
         ></textarea>
       {:else}
-        {#each blocks as blockLines, blockIdx}
+        {#each rawLines as blockLines, blockIndex}
           <!-- svelte-ignore a11y_click_events_have_key_events a11y_no_noninteractive_element_interactions -->
-          <pre class="tab-block" onclick={handleTabClick}>{#each blockLines as line}{#each renderLine(line, 0) as segment}{#if segment.active}<span class="col-active">{segment.text}</span>{:else}{segment.text}{/if}{/each}
+          <pre class="tab-block" onclick={(e) => handleTabClick(e, blockIndex)}>{#each blockLines as line}{#each renderLine(line, blockIndex) as segment}{#if segment.active}<span class="col-active">{segment.text}</span>{:else}{segment.text}{/if}{/each}
 {/each}</pre>
         {/each}
       {/if}

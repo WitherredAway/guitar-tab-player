@@ -54,7 +54,6 @@ export function createAudioEngine() {
   let sampler = null;
   let currentType = 'acoustic';
   let isLoaded = false;
-  let onLoadCallback = null;
 
   // Effects chain
   let reverb = null;
@@ -86,12 +85,7 @@ export function createAudioEngine() {
       volume = new Tone.Volume(-6).connect(reverb);
     }
 
-    // Adjust reverb for guitar type
-    if (type === 'electric') {
-      reverb.wet.value = 0.25;
-    } else {
-      reverb.wet.value = 0.15;
-    }
+    reverb.wet.value = type === 'electric' ? 0.25 : 0.15;
 
     return new Promise((resolve) => {
       sampler = new Tone.Sampler({
@@ -101,7 +95,6 @@ export function createAudioEngine() {
         onload: () => {
           isLoaded = true;
           currentType = type;
-          if (onLoadCallback) onLoadCallback();
           resolve();
         },
         onerror: (err) => {
@@ -173,12 +166,6 @@ export function createAudioEngine() {
     }
   }
 
-  /** Set a callback for when samples finish loading. */
-  function onLoad(cb) {
-    onLoadCallback = cb;
-    if (isLoaded && cb) cb();
-  }
-
   /** Set master volume in dB. 0 = unity, -Infinity = mute. */
   function setVolume(db) {
     if (volume) {
@@ -208,7 +195,6 @@ export function createAudioEngine() {
     loadInstrument,
     playNotes,
     stopAll,
-    onLoad,
     setVolume,
     dispose,
     get isLoaded() { return isLoaded; },

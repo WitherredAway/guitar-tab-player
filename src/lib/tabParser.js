@@ -91,7 +91,7 @@ export function fretToPitch(openNote, fret, stringIndex, totalStrings) {
 export function parseTab(rawText) {
   const blocks = extractBlocks(rawText);
   if (blocks.length === 0) {
-    return { tuning: [], timeline: [], rawLines: [] };
+    return { tuning: [], timeline: [], rawLines: [], totalColumns: 0, colMaps: [] };
   }
 
   // Detect tuning from the first block's string labels, or default to standard
@@ -107,27 +107,25 @@ export function parseTab(rawText) {
   // Merge consecutive blocks with the same number of strings into one
   const merged = mergeBlocks(blocks);
 
-  // Parse each merged block into timeline events and concatenate
   let timeline = [];
   const rawLines = [];
+  const colMaps = [];
+  let positionOffset = 0;
 
   for (const block of merged) {
-    const blockEvents = parseBlock(block, tuning);
-    const offset = timeline.length;
+    const { events: blockEvents, totalPositions, posToCol } = parseBlock(block, tuning);
     for (const event of blockEvents) {
-      event.position += offset;
+      event.position += positionOffset;
     }
     timeline = timeline.concat(blockEvents);
     rawLines.push(block.lines);
+    colMaps.push({ posToCol, offset: positionOffset, totalPositions });
+    positionOffset += totalPositions;
   }
 
-  // Group timeline into columns (simultaneous events at same position)
   const grouped = groupByPosition(timeline);
 
-  // Total columns = length of first content string in first merged block
-  const totalColumns = merged.length > 0 ? Math.max(...merged[0].contents.map(s => s.length)) : 0;
-
-  return { tuning, timeline: grouped, rawLines, totalColumns };
+  return { tuning, timeline: grouped, rawLines, totalColumns: positionOffset, colMaps };
 }
 
 /**
@@ -250,31 +248,54 @@ function buildBlock(lines) {
 }
 
 /**
+ * Check if a character is a technique marker (h, p, /, \).
+ */
+function isTechniqueChar(ch) {
+  return ch === 'h' || ch === 'p' || ch === '/' || ch === '\\';
+}
+
+/**
  * Parse a single block into a flat array of timeline events.
  * Reads column by column across all strings.
+ *
+ * Column classification:
+ * - Digit on any string → note column (creates events, increments position)
+ * - All dashes/pipes → empty gap column (increments position)
+ * - Technique markers only → skipped entirely (no position increment)
  */
 function parseBlock(block, tuning) {
   const { contents } = block;
   const numStrings = contents.length;
   const maxLen = Math.max(...contents.map(s => s.length));
   const events = [];
+  const posToCol = [];
   let pos = 0;
 
   // Track columns consumed by multi-digit frets per string
   const consumed = new Array(numStrings).fill(0);
 
   for (let col = 0; col < maxLen; col++) {
-    let hasContent = false;
+    let hasDigit = false;
+    let hasTechnique = false;
+
     for (let s = 0; s < numStrings; s++) {
       if (col < consumed[s]) continue;
       const ch = contents[s][col] || '-';
       if (/\d/.test(ch)) {
-        hasContent = true;
+        hasDigit = true;
         break;
+      }
+      if (isTechniqueChar(ch)) {
+        hasTechnique = true;
       }
     }
 
-    if (!hasContent) {
+    // Skip technique-only columns entirely (no position increment)
+    if (!hasDigit && hasTechnique) continue;
+
+    posToCol[pos] = col;
+
+    if (!hasDigit) {
       pos++;
       continue;
     }
@@ -295,15 +316,18 @@ function parseBlock(block, tuning) {
       consumed[s] = endCol;
 
       const fret = parseInt(fretStr, 10);
-
       const technique = detectTechnique(line, endCol);
       const prevTechnique = detectPrevTechnique(line, col);
+
+      // Skip notes that are targets of a technique from a previous note
+      // (e.g. the "4" in "2/4" — already played as part of the slide)
+      if (prevTechnique) continue;
 
       const event = {
         position: pos,
         string: s,
         fret,
-        technique: prevTechnique || technique,
+        technique: technique || null,
         openNote: tuning[s] || (block.labels[s]),
       };
 
@@ -313,12 +337,6 @@ function parseBlock(block, tuning) {
           event.targetFret = nextFret;
         }
       }
-      if (prevTechnique) {
-        const prevFret = findPrevFret(line, col);
-        if (prevFret !== null) {
-          event.fromFret = prevFret;
-        }
-      }
 
       events.push(event);
     }
@@ -326,7 +344,7 @@ function parseBlock(block, tuning) {
     pos++;
   }
 
-  return events;
+  return { events, totalPositions: pos, posToCol };
 }
 
 /**

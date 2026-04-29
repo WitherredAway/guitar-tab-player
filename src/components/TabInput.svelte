@@ -92,17 +92,37 @@ E|------------------------3-3--3--0--0---0-3-3---3-0---0---0-3--3--3-3-------|`,
     value = e.target.value;
     oninput(value);
   }
+
+  function addEmptyColumn() {
+    if (!value.trim()) {
+      // Start with a blank standard tuning template
+      value = 'e|-\nB|-\nG|-\nD|-\nA|-\nE|-';
+      oninput(value);
+      return;
+    }
+    // Append a dash to each tab line
+    value = value.split('\n').map(line => {
+      if (/^[A-Ga-g][#b]?\|/.test(line.trim()) || /^\|/.test(line.trim())) {
+        return line + '-';
+      }
+      return line;
+    }).join('\n');
+    oninput(value);
+  }
 </script>
 
 <div class="tab-input">
   <div class="input-header">
     <label for="tab-textarea">Paste your tablature</label>
-    <select class="example-select" onchange={handleExampleChange}>
-      <option value="" selected disabled>Load Example</option>
-      {#each EXAMPLES as example, i}
-        <option value={i}>{example.name}</option>
-      {/each}
-    </select>
+    <div class="header-actions">
+      <button class="add-col-btn" onclick={addEmptyColumn} title="Add an empty column to each string">+ Column</button>
+      <select class="example-select" onchange={handleExampleChange}>
+        <option value="" selected disabled>Load Example</option>
+        {#each EXAMPLES as example, i}
+          <option value={i}>{example.name}</option>
+        {/each}
+      </select>
+    </div>
   </div>
   <textarea
     id="tab-textarea"
@@ -131,6 +151,28 @@ E|-----------|"
     justify-content: space-between;
     align-items: center;
     margin-bottom: 8px;
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .add-col-btn {
+    background: var(--bg-surface);
+    color: var(--accent);
+    border: 1px solid var(--border);
+    padding: 4px 12px;
+    border-radius: var(--radius);
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s;
+  }
+
+  .add-col-btn:hover {
+    background: var(--bg-surface-hover);
+    border-color: var(--accent);
   }
 
   label {
