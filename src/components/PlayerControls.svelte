@@ -14,6 +14,8 @@
    *   onpause: () => void,
    *   onprev: () => void,
    *   onnext: () => void,
+   *   onfirst: () => void,
+   *   onlast: () => void,
    *   onspeedchange: (speed: number) => void,
    *   onseek: (index: number) => void,
    * }} */
@@ -27,6 +29,8 @@
     onpause = () => {},
     onprev = () => {},
     onnext = () => {},
+    onfirst = () => {},
+    onlast = () => {},
     onspeedchange = () => {},
     onseek = () => {},
   } = $props();
@@ -129,13 +133,25 @@
     <div class="transport">
       <button
         class="control-btn"
+        onclick={onfirst}
+        disabled={!isLoaded || totalSteps === 0}
+        title="First"
+        aria-label="Go to first"
+      >
+        <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
+          <path d="M6 6h2v12H6zm3.5 6l8.5 6V6z" />
+        </svg>
+      </button>
+
+      <button
+        class="control-btn"
         onclick={onprev}
         disabled={!isLoaded || totalSteps === 0}
         title="Previous (←)"
         aria-label="Previous chord"
       >
-        <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
-          <path d="M6 6h2v12H6zm3.5 6l8.5 6V6z" />
+        <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
+          <path d="M11 18L3 12l8-6v12zm1 0l8-6-8-6v12z" />
         </svg>
       </button>
 
@@ -164,7 +180,19 @@
         title="Next (→)"
         aria-label="Next chord"
       >
-        <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+        <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
+          <path d="M2 18l8-6-8-6v12zm10 0l8-6-8-6v12z" />
+        </svg>
+      </button>
+
+      <button
+        class="control-btn"
+        onclick={onlast}
+        disabled={!isLoaded || totalSteps === 0}
+        title="Last"
+        aria-label="Go to last"
+      >
+        <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
           <path d="M6 18l8.5-6L6 6v12zm10-12v12h2V6z" />
         </svg>
       </button>
