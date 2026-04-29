@@ -52,6 +52,23 @@ input, select, textarea {
   font-family: var(--sans);
 }
 
+select {
+  background: var(--bg-input);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 8px 12px;
+  font-size: 0.85rem;
+  outline: none;
+  transition: border-color 0.2s;
+  cursor: pointer;
+}
+
+select:focus {
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
 /* Scrollbar styling */
 ::-webkit-scrollbar {
   width: 8px;
@@ -64,7 +81,7 @@ input, select, textarea {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--border);
+  background: var(--text-muted);
   border-radius: 4px;
 }
 
@@ -74,7 +91,7 @@ input, select, textarea {
 
 * {
   scrollbar-width: thin;
-  scrollbar-color: var(--border) var(--bg-input);
+  scrollbar-color: var(--text-muted) var(--bg-input);
 }
 
 /* Unified slider style */
