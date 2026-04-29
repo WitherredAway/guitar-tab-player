@@ -94,11 +94,23 @@
     const pre = e.currentTarget;
     const rect = pre.getBoundingClientRect();
     const x = e.clientX - rect.left + pre.scrollLeft;
-    const charWidth = pre.scrollWidth / (pre.textContent.split('\n')[0]?.length || 1);
+
+    // Measure actual character width using a temporary span
+    const span = document.createElement('span');
+    span.textContent = 'M';
+    span.style.visibility = 'hidden';
+    span.style.position = 'absolute';
+    span.style.font = getComputedStyle(pre).font;
+    document.body.appendChild(span);
+    const charWidth = span.getBoundingClientRect().width;
+    span.remove();
+
     const clickedCol = Math.floor(x / charWidth);
     const firstLine = rawLines[0]?.[0] || '';
     const pipeIdx = firstLine.indexOf('|');
     const contentCol = Math.max(0, clickedCol - (pipeIdx + 1));
+
+    // Find the nearest timeline entry at or after the clicked position
     let closest = 0;
     let minDist = Infinity;
     for (let i = 0; i < timeline.length; i++) {

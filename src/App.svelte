@@ -100,19 +100,19 @@
     engine.playNotes(column.notes, activeTuning, noteDuration, stringVolumes);
 
     if (currentIndex + 1 >= parsedData.timeline.length) {
-      currentIndex++;
       isPlaying = false;
       return;
     }
 
     const nextPos = parsedData.timeline[currentIndex + 1].position;
     const gap = nextPos - column.position;
-    const stepMs = Math.max(240, 200) / speed;
+    const totalGapMs = Math.max(240, gap * 200) / speed;
+    const stepMs = totalGapMs / gap;
 
     currentIndex++;
 
     if (gap <= 1) {
-      playInterval = setTimeout(() => playCurrentAndAdvance(), stepMs);
+      playInterval = setTimeout(() => playCurrentAndAdvance(), totalGapMs);
     } else {
       let step = 1;
       function advanceStep() {
