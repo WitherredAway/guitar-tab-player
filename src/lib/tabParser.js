@@ -154,8 +154,9 @@ function extractBlocks(rawText) {
 
   for (const line of allLines) {
     const trimmed = line.trim();
-    if (isTabLine(trimmed)) {
-      current.push(trimmed);
+    const cleaned = cleanTabLine(trimmed);
+    if (isTabLine(cleaned)) {
+      current.push(cleaned);
     } else {
       if (current.length > 0) {
         blocks.push(buildBlock(current));
@@ -192,7 +193,11 @@ function mergeBlocks(blocks) {
       current.lines = current.lines.map((l, j) => {
         const nextLine = next.lines[j];
         const pipeIdx = nextLine.indexOf('|');
-        return l + nextLine.substring(pipeIdx + 1);
+        if (pipeIdx === -1) return l + nextLine;
+        if (pipeIdx === 0) return l + nextLine.substring(1);
+        const prefix = nextLine.substring(0, pipeIdx).trim();
+        if (/^[A-Ga-g][#b]?$/.test(prefix)) return l + nextLine.substring(pipeIdx + 1);
+        return l + nextLine;
       });
     } else {
       result.push(current);
@@ -209,12 +214,31 @@ function mergeBlocks(blocks) {
 }
 
 /**
+ * Strip trailing non-tab text from a line (e.g. "| repeat from *" → "|").
+ * Keeps content after the last pipe only if it consists of valid tab characters.
+ */
+function cleanTabLine(line) {
+  const lastPipe = line.lastIndexOf('|');
+  if (lastPipe === -1) return line;
+
+  const afterLastPipe = line.substring(lastPipe + 1).trim();
+  if (!afterLastPipe || /^[\d\-hpHP\/\\~*xXsS.]+$/.test(afterLastPipe)) {
+    return line;
+  }
+  return line.substring(0, lastPipe + 1);
+}
+
+/**
  * Check if a line looks like a tab string line.
- * Matches labeled lines (e.g. "e|---0---|") and unlabeled lines (e.g. "|---0---|").
+ * Matches labeled lines (e.g. "e|---0---|"), unlabeled lines starting with
+ * a pipe (e.g. "|---0---|"), and unlabeled lines without a leading pipe
+ * (e.g. "--------|---------|" as found in some tab pastes).
  */
 function isTabLine(line) {
-  if (/^[A-Ga-g][#b]?\|/.test(line)) return true;
-  if (/^\|[\d\-hpHP\/\\|~*xXsS .]+\|?$/.test(line)) return true;
+  const cleaned = cleanTabLine(line);
+  if (/^[A-Ga-g][#b]?\|/.test(cleaned)) return true;
+  if (/^\|[\d\-hpHP\/\\|~*xXsS .]+\|?$/.test(cleaned)) return true;
+  if (cleaned.includes('|') && /^[\d\-hpHP\/\\~*xXsS .]+(?:\|[\d\-hpHP\/\\~*xXsS .]*)+\|?$/.test(cleaned)) return true;
   return false;
 }
 
