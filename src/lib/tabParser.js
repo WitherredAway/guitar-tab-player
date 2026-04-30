@@ -190,13 +190,13 @@ function mergeBlocks(blocks) {
 
     if (current.labels.length === next.labels.length) {
       current.contents = current.contents.map((c, j) => c + next.contents[j]);
-      const nextHasLabels = next.labels.some(l => l !== '');
       current.lines = current.lines.map((l, j) => {
         const nextLine = next.lines[j];
-        if (nextHasLabels) {
-          const pipeIdx = nextLine.indexOf('|');
-          return l + nextLine.substring(pipeIdx + 1);
-        }
+        const pipeIdx = nextLine.indexOf('|');
+        if (pipeIdx === -1) return l + nextLine;
+        if (pipeIdx === 0) return l + nextLine.substring(1);
+        const prefix = nextLine.substring(0, pipeIdx).trim();
+        if (/^[A-Ga-g][#b]?$/.test(prefix)) return l + nextLine.substring(pipeIdx + 1);
         return l + nextLine;
       });
     } else {
