@@ -108,6 +108,10 @@ export function createAudioEngine() {
   /**
    * Play a single note or chord (array of note events).
    *
+   * Technique handling: source notes schedule their target with a tiny delay
+   * so hammer-ons, pull-offs, and slides transition seamlessly. Target notes
+   * (prevTechnique) are skipped since they were already triggered by the source.
+   *
    * @param {object[]} notes - Array of note events from the parser
    * @param {string[]} tuning - Current tuning array (low → high)
    * @param {number} [duration=0.5] - Note duration in seconds
@@ -116,35 +120,78 @@ export function createAudioEngine() {
   function playNotes(notes, tuning, duration = 0.5, stringVolumes) {
     if (!sampler || !isLoaded) return;
 
+    const now = Tone.now();
+
     for (const note of notes) {
       const pitch = fretToPitch(note.openNote, note.fret, note.string, tuning.length);
       const vol = stringVolumes ? (stringVolumes[note.string] ?? 1) : 1;
 
-      // Technique targets (e.g. the "4" in "2h4") play softer (legato, not plucked)
       if (note.prevTechnique) {
-        sampler.triggerAttackRelease(pitch, duration * 0.8, undefined, 0.45 * vol);
+        // Already triggered from the source — don't replay.
+        // But if this note chains to another technique (e.g. the "4" in "2h4p2"),
+        // schedule its own target.
+        if (note.technique && note.targetFret != null) {
+          scheduleTarget(note, now, duration, vol, tuning.length);
+        }
         continue;
       }
 
       switch (note.technique) {
-        case 'hammer-on':
-        case 'pull-off':
-          // Source note: plucked normally
-          sampler.triggerAttackRelease(pitch, duration * 0.8, undefined, 0.7 * vol);
+        case 'hammer-on': {
+          // Source sustains into target — plucked note rings while target hammers on
+          sampler.triggerAttackRelease(pitch, duration * 0.6, now, 0.8 * vol);
+          if (note.targetFret != null) {
+            const targetPitch = fretToPitch(note.openNote, note.targetFret, note.string, tuning.length);
+            sampler.triggerAttackRelease(targetPitch, duration, now + 0.08, 0.55 * vol);
+          }
           break;
+        }
+
+        case 'pull-off': {
+          // Source with quick release — lifting off to sound the target
+          sampler.triggerAttackRelease(pitch, duration * 0.4, now, 0.8 * vol);
+          if (note.targetFret != null) {
+            const targetPitch = fretToPitch(note.openNote, note.targetFret, note.string, tuning.length);
+            sampler.triggerAttackRelease(targetPitch, duration, now + 0.08, 0.6 * vol);
+          }
+          break;
+        }
 
         case 'slide-up':
         case 'slide-down': {
-          // Brief source note that quickly fades — target plays at its own position
-          const slideDur = Math.min(duration * 0.3, 0.15);
-          sampler.triggerAttackRelease(pitch, slideDur, undefined, 0.4 * vol);
+          // Source fades quickly, target kicks in with overlap for slide feel
+          sampler.triggerAttackRelease(pitch, 0.15, now, 0.5 * vol);
+          if (note.targetFret != null) {
+            const targetPitch = fretToPitch(note.openNote, note.targetFret, note.string, tuning.length);
+            sampler.triggerAttackRelease(targetPitch, duration, now + 0.1, 0.7 * vol);
+          }
           break;
         }
 
         default:
-          sampler.triggerAttackRelease(pitch, duration, undefined, 0.8 * vol);
+          sampler.triggerAttackRelease(pitch, duration, now, 0.8 * vol);
           break;
       }
+    }
+  }
+
+  /**
+   * Schedule a technique target note (used for chained techniques like 2h4p2).
+   */
+  function scheduleTarget(note, now, duration, vol, totalStrings) {
+    const targetPitch = fretToPitch(note.openNote, note.targetFret, note.string, totalStrings);
+
+    switch (note.technique) {
+      case 'hammer-on':
+        sampler.triggerAttackRelease(targetPitch, duration, now + 0.08, 0.55 * vol);
+        break;
+      case 'pull-off':
+        sampler.triggerAttackRelease(targetPitch, duration, now + 0.08, 0.6 * vol);
+        break;
+      case 'slide-up':
+      case 'slide-down':
+        sampler.triggerAttackRelease(targetPitch, duration, now + 0.1, 0.7 * vol);
+        break;
     }
   }
 
