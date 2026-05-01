@@ -281,7 +281,7 @@
   main {
     max-width: 1100px;
     margin: 0 auto;
-    padding: 32px 24px 120px;
+    padding: 32px 24px 160px;
     width: 100%;
   }
 
@@ -369,7 +369,7 @@
 
   @media (max-width: 640px) {
     main {
-      padding: 20px 16px 100px;
+      padding: 20px 16px 200px;
     }
 
     h1 {

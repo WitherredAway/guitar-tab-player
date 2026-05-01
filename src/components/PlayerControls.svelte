@@ -121,7 +121,7 @@
   <div class="controls-row">
     <!-- Position display -->
     <div class="position-display">
-      <span class="current">{currentPosition + 1}</span>
+      <span class="current">{totalColumns > 0 ? currentPosition + 1 : '-'}</span>
       <span class="separator">/</span>
       <span class="total">{totalColumns}</span>
     </div>
