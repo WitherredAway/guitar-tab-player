@@ -123,7 +123,7 @@
     <div class="position-display">
       <span class="current">{totalColumns > 0 ? currentPosition : '-'}</span>
       <span class="separator">/</span>
-      <span class="total">{totalColumns > 0 ? totalColumns - 1 : '-'}</span>
+      <span class="total">{totalColumns}</span>
     </div>
 
     <!-- Transport controls -->
