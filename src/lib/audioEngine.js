@@ -52,8 +52,8 @@ function buildSampleUrls(type) {
  */
 /** Timing and volume params per technique — single source of truth. */
 const TECHNIQUE_PARAMS = {
-  'hammer-on':  { sourceDurMul: 0.6, sourceVol: 0.8, delay: 0.08, targetVol: 0.55 },
-  'pull-off':   { sourceDurMul: 0.4, sourceVol: 0.8, delay: 0.08, targetVol: 0.6 },
+  'hammer-on':  { sourceDurMul: 0.4, sourceVol: 0.7, delay: 0.08, targetVol: 0.65 },
+  'pull-off':   { sourceDurMul: 0.7, sourceVol: 0.85, delay: 0.10, targetVol: 0.4 },
   'slide-up':   { sourceDurAbs: 0.15, sourceVol: 0.5, delay: 0.1, targetVol: 0.7 },
   'slide-down': { sourceDurAbs: 0.15, sourceVol: 0.5, delay: 0.1, targetVol: 0.7 },
 };
@@ -131,24 +131,33 @@ export function createAudioEngine() {
     const now = Tone.now();
 
     for (const note of notes) {
-      const pitch = fretToPitch(note.openNote, note.fret, note.string, tuning.length);
       const vol = stringVolumes ? (stringVolumes[note.string] ?? 1) : 1;
 
-      if (note.prevTechnique) {
-        // Already triggered from the source — don't replay.
-        // But if this note chains to another technique (e.g. the "4" in "2h4p2"),
-        // schedule its own target.
-        if (note.technique && note.targetFret != null) {
-          scheduleTarget(note, now, duration, vol, tuning.length);
-        }
-        continue;
-      }
+      // Chain targets are already scheduled by the chain source — skip
+      if (note.isChainTarget || note.prevTechnique) continue;
+
+      const pitch = fretToPitch(note.openNote, note.fret, note.string, tuning.length);
 
       const techParams = TECHNIQUE_PARAMS[note.technique];
       if (techParams) {
         const srcDur = techParams.sourceDurAbs ?? duration * techParams.sourceDurMul;
         sampler.triggerAttackRelease(pitch, srcDur, now, techParams.sourceVol * vol);
-        if (note.targetFret != null) {
+
+        // Schedule the full chain from this source
+        if (note.techniqueChain) {
+          let cumDelay = 0;
+          for (let ci = 0; ci < note.techniqueChain.length; ci++) {
+            const link = note.techniqueChain[ci];
+            const linkParams = TECHNIQUE_PARAMS[link.technique];
+            cumDelay += linkParams ? linkParams.delay : 0.08;
+            const linkPitch = fretToPitch(note.openNote, link.fret, note.string, tuning.length);
+            const linkVol = linkParams ? linkParams.targetVol : 0.55;
+            const linkDur = ci < note.techniqueChain.length - 1
+              ? (linkParams ? (linkParams.sourceDurAbs ?? duration * linkParams.sourceDurMul) : duration * 0.5)
+              : duration;
+            sampler.triggerAttackRelease(linkPitch, linkDur, now + cumDelay, linkVol * vol);
+          }
+        } else if (note.targetFret != null) {
           const targetPitch = fretToPitch(note.openNote, note.targetFret, note.string, tuning.length);
           sampler.triggerAttackRelease(targetPitch, duration, now + techParams.delay, techParams.targetVol * vol);
         }
@@ -156,16 +165,6 @@ export function createAudioEngine() {
         sampler.triggerAttackRelease(pitch, duration, now, 0.8 * vol);
       }
     }
-  }
-
-  /**
-   * Schedule a technique target note (used for chained techniques like 2h4p2).
-   */
-  function scheduleTarget(note, now, duration, vol, totalStrings) {
-    const techParams = TECHNIQUE_PARAMS[note.technique];
-    if (!techParams || note.targetFret == null) return;
-    const targetPitch = fretToPitch(note.openNote, note.targetFret, note.string, totalStrings);
-    sampler.triggerAttackRelease(targetPitch, duration, now + techParams.delay, techParams.targetVol * vol);
   }
 
   /** Stop all currently playing notes. */
