@@ -125,10 +125,11 @@ export function createAudioEngine() {
    * @param {number} [duration=0.5] - Note duration in seconds
    * @param {number[]} [stringVolumes] - Per-string volume multipliers (0–1)
    */
-  function playNotes(notes, tuning, duration = 0.5, stringVolumes) {
+  function playNotes(notes, tuning, duration = 0.5, stringVolumes, speed = 1) {
     if (!sampler || !isLoaded) return;
 
     const now = Tone.now();
+    const timeScale = 1 / speed;
 
     for (const note of notes) {
       const vol = stringVolumes ? (stringVolumes[note.string] ?? 1) : 1;
@@ -140,7 +141,7 @@ export function createAudioEngine() {
 
       const techParams = TECHNIQUE_PARAMS[note.technique];
       if (techParams) {
-        const srcDur = techParams.sourceDurAbs ?? duration * techParams.sourceDurMul;
+        const srcDur = techParams.sourceDurAbs ? techParams.sourceDurAbs * timeScale : duration * techParams.sourceDurMul;
         sampler.triggerAttackRelease(pitch, srcDur, now, techParams.sourceVol * vol);
 
         // Schedule the full chain from this source
@@ -149,17 +150,17 @@ export function createAudioEngine() {
           for (let ci = 0; ci < note.techniqueChain.length; ci++) {
             const link = note.techniqueChain[ci];
             const linkParams = TECHNIQUE_PARAMS[link.technique];
-            cumDelay += linkParams ? linkParams.delay : 0.08;
+            cumDelay += (linkParams ? linkParams.delay : 0.08) * timeScale;
             const linkPitch = fretToPitch(note.openNote, link.fret, note.string, tuning.length);
             const linkVol = linkParams ? linkParams.targetVol : 0.55;
             const linkDur = ci < note.techniqueChain.length - 1
-              ? (linkParams ? (linkParams.sourceDurAbs ?? duration * linkParams.sourceDurMul) : duration * 0.5)
+              ? (linkParams ? (linkParams.sourceDurAbs ? linkParams.sourceDurAbs * timeScale : duration * linkParams.sourceDurMul) : duration * 0.5)
               : duration;
             sampler.triggerAttackRelease(linkPitch, linkDur, now + cumDelay, linkVol * vol);
           }
         } else if (note.targetFret != null) {
           const targetPitch = fretToPitch(note.openNote, note.targetFret, note.string, tuning.length);
-          sampler.triggerAttackRelease(targetPitch, duration, now + techParams.delay, techParams.targetVol * vol);
+          sampler.triggerAttackRelease(targetPitch, duration, now + techParams.delay * timeScale, techParams.targetVol * vol);
         }
       } else {
         sampler.triggerAttackRelease(pitch, duration, now, 0.8 * vol);
