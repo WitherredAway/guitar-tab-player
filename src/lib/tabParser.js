@@ -281,6 +281,49 @@ function buildBlock(lines) {
   return { labels, contents, lines };
 }
 
+/** Delay (in seconds) for each technique transition. */
+const TECHNIQUE_DELAY = {
+  'hammer-on':  0.08,
+  'pull-off':   0.10,
+  'slide-up':   0.10,
+  'slide-down': 0.10,
+};
+
+/**
+ * Build technique chains by linking consecutive technique notes on the same
+ * string. The chain source gets a `techniqueChain` array, and each chain
+ * member gets `isChainTarget = true` with a `chainDelay` (seconds).
+ */
+function buildTechniqueChains(events) {
+  const byString = new Map();
+  for (const e of events) {
+    if (!byString.has(e.string)) byString.set(e.string, []);
+    byString.get(e.string).push(e);
+  }
+
+  for (const stringEvents of byString.values()) {
+    stringEvents.sort((a, b) => a.position - b.position);
+    for (let i = 0; i < stringEvents.length; i++) {
+      const src = stringEvents[i];
+      if (!src.technique || src.prevTechnique) continue;
+
+      const chain = [];
+      let j = i + 1;
+      while (j < stringEvents.length && stringEvents[j].prevTechnique) {
+        const member = stringEvents[j];
+        const prevTech = member.prevTechnique;
+        chain.push({ fret: member.fret, technique: prevTech });
+        member.isChainTarget = true;
+        member.chainDelay = TECHNIQUE_DELAY[prevTech] || 0.08;
+        j++;
+      }
+      if (chain.length > 0) {
+        src.techniqueChain = chain;
+      }
+    }
+  }
+}
+
 /**
  * Check if a character is a technique marker (h, p, /, \).
  */
@@ -374,6 +417,8 @@ function parseBlock(block, tuning) {
 
     pos++;
   }
+
+  buildTechniqueChains(events);
 
   return { events, totalPositions: pos, posToCol };
 }

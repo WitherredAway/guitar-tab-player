@@ -123,7 +123,18 @@
       return;
     }
 
-    const nextPos = parsedData.timeline[currentIndex + 1].position;
+    const nextColumn = parsedData.timeline[currentIndex + 1];
+
+    // Chain targets: advance cursor at technique speed (synced with audio)
+    const isChainStep = nextColumn.notes.every(n => n.isChainTarget || n.prevTechnique);
+    if (isChainStep) {
+      const chainDelayMs = (nextColumn.notes[0].chainDelay || 0.08) * 1000 / speed;
+      currentIndex++;
+      playInterval = setTimeout(() => playCurrentAndAdvance(), chainDelayMs);
+      return;
+    }
+
+    const nextPos = nextColumn.position;
     const gap = nextPos - column.position;
     const totalGapMs = Math.max(240, gap * 200) / speed;
     const stepMs = totalGapMs / gap;
