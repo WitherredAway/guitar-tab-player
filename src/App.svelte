@@ -28,6 +28,7 @@
   const engine = createAudioEngine();
 
   function handleTabInput(text) {
+    const wasLoaded = parsedData.totalColumns > 0;
     rawTabText = text;
     const result = parseTab(text);
     parsedData = result;
@@ -42,10 +43,15 @@
       stringVolumes = Array.from({ length: result.tuning.length }, (_, i) => stringVolumes[i] ?? 1);
     }
 
-    // Reset playback
     handlePause();
-    currentIndex = 0;
-    activePosition = 0;
+    if (wasLoaded && result.totalColumns > 0) {
+      // Editing: clamp position to new bounds
+      activePosition = Math.min(activePosition, result.totalColumns - 1);
+    } else {
+      // Fresh paste: reset to start
+      currentIndex = 0;
+      activePosition = 0;
+    }
 
     // Auto-load instrument if not loaded
     if (result.timeline.length > 0 && !isLoaded) {
