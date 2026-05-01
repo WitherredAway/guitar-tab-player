@@ -93,7 +93,10 @@
 
     // Find the next note at or after current position
     currentIndex = timelineIndexAtOrAfter(activePosition);
-    if (currentIndex >= parsedData.timeline.length) {
+
+    // Restart from beginning if at or past the end
+    const lastPos = parsedData.timeline[parsedData.timeline.length - 1].position;
+    if (currentIndex >= parsedData.timeline.length || activePosition >= lastPos) {
       currentIndex = 0;
       activePosition = 0;
     }

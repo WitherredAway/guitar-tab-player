@@ -151,12 +151,22 @@ function extractBlocks(rawText) {
   const allLines = rawText.split('\n');
   const blocks = [];
   let current = [];
+  let currentIsLabeled = false;
 
   for (const line of allLines) {
     const trimmed = line.trim();
     const cleaned = cleanTabLine(trimmed);
     if (isTabLine(cleaned)) {
+      const isLabeled = /^[A-Ga-g][#b]?\|/.test(cleaned);
+
+      // Split when transitioning between labeled and unlabeled lines
+      if (current.length > 0 && isLabeled !== currentIsLabeled) {
+        blocks.push(buildBlock(current));
+        current = [];
+      }
+
       current.push(cleaned);
+      currentIsLabeled = isLabeled;
     } else {
       if (current.length > 0) {
         blocks.push(buildBlock(current));
