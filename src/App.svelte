@@ -90,7 +90,7 @@
     const idx = parsedData.timeline.findIndex(c => c.position === activePosition);
     if (idx >= 0) {
       currentIndex = idx;
-      engine.playNotes(parsedData.timeline[idx].notes, activeTuning, 0.4, stringVolumes);
+      engine.playNotes(parsedData.timeline[idx].notes, activeTuning, 0.4, stringVolumes, speed);
     }
   }
 
@@ -122,7 +122,7 @@
     const column = parsedData.timeline[currentIndex];
     activePosition = column.position;
     const noteDuration = 1.6 / speed;
-    engine.playNotes(column.notes, activeTuning, noteDuration, stringVolumes);
+    engine.playNotes(column.notes, activeTuning, noteDuration, stringVolumes, speed);
 
     if (currentIndex + 1 >= parsedData.timeline.length) {
       isPlaying = false;
