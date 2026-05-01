@@ -125,6 +125,19 @@
     return null;
   }
 
+  function spanAt(content, col) {
+    if (col < 0 || col >= content.length) return [col, col];
+    const ch = content[col];
+    if (/\d/.test(ch)) {
+      let start = col;
+      while (start > 0 && /\d/.test(content[start - 1])) start--;
+      let end = col;
+      while (end + 1 < content.length && /\d/.test(content[end + 1])) end++;
+      return [start, end + 1];
+    }
+    return [col, col + 1];
+  }
+
   function removeColumn() {
     const info = findBlockAndCol();
     if (!info || info.contentCol < 0) return;
@@ -137,7 +150,8 @@
         const label = line.substring(0, pipeIdx + 1);
         const content = line.substring(pipeIdx + 1);
         if (contentCol >= content.length) return line;
-        return label + content.substring(0, contentCol) + content.substring(contentCol + 1);
+        const [start, end] = spanAt(content, contentCol);
+        return label + content.substring(0, start) + content.substring(end);
       });
     });
     onedit(newLines.map(block => block.join('\n')).join('\n\n'));
@@ -154,7 +168,8 @@
         if (pipeIdx < 0) return line;
         const label = line.substring(0, pipeIdx + 1);
         const content = line.substring(pipeIdx + 1);
-        const insertAt = Math.min(contentCol + 1, content.length);
+        const [, end] = spanAt(content, contentCol);
+        const insertAt = Math.min(end, content.length);
         return label + content.substring(0, insertAt) + '-' + content.substring(insertAt);
       });
     });
