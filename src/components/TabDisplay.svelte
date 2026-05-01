@@ -110,6 +110,56 @@
   function cancelEdit() {
     editing = false;
   }
+
+  let hasSelection = $derived(activePosition >= 0 && totalColumns > 0);
+
+  function findBlockAndCol() {
+    for (let i = 0; i < colMaps.length; i++) {
+      const map = colMaps[i];
+      const localPos = activePosition - map.offset;
+      if (localPos >= 0 && localPos < map.totalPositions) {
+        const contentCol = map.posToCol[localPos] ?? -1;
+        return { blockIndex: i, contentCol };
+      }
+    }
+    return null;
+  }
+
+  function removeColumn() {
+    const info = findBlockAndCol();
+    if (!info || info.contentCol < 0) return;
+    const { blockIndex, contentCol } = info;
+    const newLines = rawLines.map((block, bi) => {
+      if (bi !== blockIndex) return block;
+      return block.map(line => {
+        const pipeIdx = line.indexOf('|');
+        if (pipeIdx < 0) return line;
+        const label = line.substring(0, pipeIdx + 1);
+        const content = line.substring(pipeIdx + 1);
+        if (contentCol >= content.length) return line;
+        return label + content.substring(0, contentCol) + content.substring(contentCol + 1);
+      });
+    });
+    onedit(newLines.map(block => block.join('\n')).join('\n\n'));
+  }
+
+  function insertColumn() {
+    const info = findBlockAndCol();
+    if (!info || info.contentCol < 0) return;
+    const { blockIndex, contentCol } = info;
+    const newLines = rawLines.map((block, bi) => {
+      if (bi !== blockIndex) return block;
+      return block.map(line => {
+        const pipeIdx = line.indexOf('|');
+        if (pipeIdx < 0) return line;
+        const label = line.substring(0, pipeIdx + 1);
+        const content = line.substring(pipeIdx + 1);
+        const insertAt = Math.min(contentCol + 1, content.length);
+        return label + content.substring(0, insertAt) + '-' + content.substring(insertAt);
+      });
+    });
+    onedit(newLines.map(block => block.join('\n')).join('\n\n'));
+  }
 </script>
 
 {#if hasContent}
@@ -124,6 +174,8 @@
           <button class="edit-btn" onclick={saveEdit}>Save</button>
           <button class="edit-btn cancel-btn" onclick={cancelEdit}>Cancel</button>
         {:else}
+          <button class="edit-btn col-btn" onclick={removeColumn} disabled={!hasSelection} title="Remove selected column">− Col</button>
+          <button class="edit-btn col-btn" onclick={insertColumn} disabled={!hasSelection} title="Insert empty column after selected">+ Col</button>
           <button class="edit-btn" onclick={startEditing}>Edit</button>
         {/if}
       </div>
@@ -193,6 +245,17 @@
 
   .cancel-btn {
     background: transparent;
+  }
+
+  .col-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+
+  .col-btn:disabled:hover {
+    background: var(--bg-surface-hover);
+    color: var(--text-heading);
+    border-color: var(--border);
   }
 
   .tab-edit-textarea {
