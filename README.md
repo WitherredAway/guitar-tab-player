@@ -11,7 +11,7 @@ A web-based guitar tablature player that brings ASCII tabs to life with real sam
 [![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vite.dev/)
 [![GitHub Pages](https://img.shields.io/badge/GitHub_Pages-222222?style=for-the-badge&logo=githubpages&logoColor=white)](https://witherredaway.github.io/guitar-tab-player/)
 
-**[Visit the Website](https://witherredaway.github.io/guitar-tab-player/)**
+[![Visit the Website](https://img.shields.io/badge/Visit_the_Website-d4bbff?style=for-the-badge&logo=googlechrome&logoColor=0a0a0a)](https://witherredaway.github.io/guitar-tab-player/)
 
 </div>
 
