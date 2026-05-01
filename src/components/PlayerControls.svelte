@@ -399,25 +399,43 @@
     width: 60px;
   }
 
-  @media (max-width: 480px) {
+  @media (max-width: 600px) {
     .player-controls {
       padding: 10px 14px;
     }
 
     .controls-row {
+      flex-wrap: wrap;
+      justify-content: center;
       gap: 8px;
     }
 
     .position-display {
-      display: none;
+      order: 3;
+      flex: 0 0 auto;
+      text-align: center;
+    }
+
+    .transport {
+      order: 1;
+      flex: 0 0 100%;
+      justify-content: center;
     }
 
     .speed-control {
-      min-width: 90px;
+      order: 2;
+      flex: 0 0 auto;
+      min-width: auto;
+      justify-content: center;
     }
 
     .speed-control input[type='range'] {
       width: 60px;
+    }
+
+    .volume-control {
+      order: 2;
+      flex: 0 0 auto;
     }
   }
 </style>

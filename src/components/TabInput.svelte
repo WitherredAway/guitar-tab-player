@@ -225,4 +225,16 @@ E|-----------|"
     color: var(--text-muted);
     opacity: 0.6;
   }
+
+  @media (max-width: 480px) {
+    .input-header {
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .header-actions {
+      flex: 1;
+      justify-content: flex-end;
+    }
+  }
 </style>
