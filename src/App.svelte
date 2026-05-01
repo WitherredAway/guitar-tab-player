@@ -157,15 +157,9 @@
     engine.stopAll();
   }
 
-  function handlePrev() {
+  function seekTo(pos) {
     handlePause();
-    activePosition = Math.max(0, activePosition - 1);
-    playAtPosition();
-  }
-
-  function handleNext() {
-    handlePause();
-    activePosition = Math.min(parsedData.totalColumns - 1, activePosition + 1);
+    activePosition = Math.max(0, Math.min(pos, parsedData.totalColumns - 1));
     playAtPosition();
   }
 
@@ -177,24 +171,6 @@
     masterVolume = vol;
     const db = vol <= 0 ? -Infinity : 20 * Math.log10(vol);
     engine.setVolume(db);
-  }
-
-  function handleSeek(pos) {
-    handlePause();
-    activePosition = pos;
-    playAtPosition();
-  }
-
-  function handleFirst() {
-    handlePause();
-    activePosition = 0;
-    playAtPosition();
-  }
-
-  function handleLast() {
-    handlePause();
-    activePosition = parsedData.totalColumns - 1;
-    playAtPosition();
   }
 
   function handleStringVolumeChange(index, vol) {
@@ -249,7 +225,7 @@
           totalColumns={parsedData.totalColumns}
           colMaps={parsedData.colMaps}
           {isPlaying}
-          onseek={handleSeek}
+          onseek={seekTo}
           onedit={handleTabInput}
         />
       </section>
@@ -264,12 +240,12 @@
         {isLoaded}
         onplay={handlePlay}
         onpause={handlePause}
-        onprev={handlePrev}
-        onnext={handleNext}
-        onfirst={handleFirst}
-        onlast={handleLast}
+        onprev={() => seekTo(activePosition - 1)}
+        onnext={() => seekTo(activePosition + 1)}
+        onfirst={() => seekTo(0)}
+        onlast={() => seekTo(parsedData.totalColumns - 1)}
         onspeedchange={handleSpeedChange}
-        onseek={handleSeek}
+        onseek={seekTo}
         volume={masterVolume}
         onvolumechange={handleVolumeChange}
       />
