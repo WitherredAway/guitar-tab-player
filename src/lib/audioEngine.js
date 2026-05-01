@@ -50,6 +50,14 @@ function buildSampleUrls(type) {
  *
  * @returns {object} Engine API
  */
+/** Timing and volume params per technique — single source of truth. */
+const TECHNIQUE_PARAMS = {
+  'hammer-on':  { sourceDurMul: 0.6, sourceVol: 0.8, delay: 0.08, targetVol: 0.55 },
+  'pull-off':   { sourceDurMul: 0.4, sourceVol: 0.8, delay: 0.08, targetVol: 0.6 },
+  'slide-up':   { sourceDurAbs: 0.15, sourceVol: 0.5, delay: 0.1, targetVol: 0.7 },
+  'slide-down': { sourceDurAbs: 0.15, sourceVol: 0.5, delay: 0.1, targetVol: 0.7 },
+};
+
 export function createAudioEngine() {
   let sampler = null;
   let currentType = 'acoustic';
@@ -136,41 +144,16 @@ export function createAudioEngine() {
         continue;
       }
 
-      switch (note.technique) {
-        case 'hammer-on': {
-          // Source sustains into target — plucked note rings while target hammers on
-          sampler.triggerAttackRelease(pitch, duration * 0.6, now, 0.8 * vol);
-          if (note.targetFret != null) {
-            const targetPitch = fretToPitch(note.openNote, note.targetFret, note.string, tuning.length);
-            sampler.triggerAttackRelease(targetPitch, duration, now + 0.08, 0.55 * vol);
-          }
-          break;
+      const techParams = TECHNIQUE_PARAMS[note.technique];
+      if (techParams) {
+        const srcDur = techParams.sourceDurAbs ?? duration * techParams.sourceDurMul;
+        sampler.triggerAttackRelease(pitch, srcDur, now, techParams.sourceVol * vol);
+        if (note.targetFret != null) {
+          const targetPitch = fretToPitch(note.openNote, note.targetFret, note.string, tuning.length);
+          sampler.triggerAttackRelease(targetPitch, duration, now + techParams.delay, techParams.targetVol * vol);
         }
-
-        case 'pull-off': {
-          // Source with quick release — lifting off to sound the target
-          sampler.triggerAttackRelease(pitch, duration * 0.4, now, 0.8 * vol);
-          if (note.targetFret != null) {
-            const targetPitch = fretToPitch(note.openNote, note.targetFret, note.string, tuning.length);
-            sampler.triggerAttackRelease(targetPitch, duration, now + 0.08, 0.6 * vol);
-          }
-          break;
-        }
-
-        case 'slide-up':
-        case 'slide-down': {
-          // Source fades quickly, target kicks in with overlap for slide feel
-          sampler.triggerAttackRelease(pitch, 0.15, now, 0.5 * vol);
-          if (note.targetFret != null) {
-            const targetPitch = fretToPitch(note.openNote, note.targetFret, note.string, tuning.length);
-            sampler.triggerAttackRelease(targetPitch, duration, now + 0.1, 0.7 * vol);
-          }
-          break;
-        }
-
-        default:
-          sampler.triggerAttackRelease(pitch, duration, now, 0.8 * vol);
-          break;
+      } else {
+        sampler.triggerAttackRelease(pitch, duration, now, 0.8 * vol);
       }
     }
   }
@@ -179,20 +162,10 @@ export function createAudioEngine() {
    * Schedule a technique target note (used for chained techniques like 2h4p2).
    */
   function scheduleTarget(note, now, duration, vol, totalStrings) {
+    const techParams = TECHNIQUE_PARAMS[note.technique];
+    if (!techParams || note.targetFret == null) return;
     const targetPitch = fretToPitch(note.openNote, note.targetFret, note.string, totalStrings);
-
-    switch (note.technique) {
-      case 'hammer-on':
-        sampler.triggerAttackRelease(targetPitch, duration, now + 0.08, 0.55 * vol);
-        break;
-      case 'pull-off':
-        sampler.triggerAttackRelease(targetPitch, duration, now + 0.08, 0.6 * vol);
-        break;
-      case 'slide-up':
-      case 'slide-down':
-        sampler.triggerAttackRelease(targetPitch, duration, now + 0.1, 0.7 * vol);
-        break;
-    }
+    sampler.triggerAttackRelease(targetPitch, duration, now + techParams.delay, techParams.targetVol * vol);
   }
 
   /** Stop all currently playing notes. */

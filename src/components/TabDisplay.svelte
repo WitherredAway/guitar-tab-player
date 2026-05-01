@@ -138,20 +138,31 @@
     return [col, col + 1];
   }
 
+  function getBlockContents(block, contentCol) {
+    const parts = [];
+    for (const line of block) {
+      const pipeIdx = line.indexOf('|');
+      if (pipeIdx < 0) { parts.push(null); continue; }
+      const content = line.substring(pipeIdx + 1);
+      const [start, end] = spanAt(content, contentCol);
+      parts.push({ label: line.substring(0, pipeIdx + 1), content, start, end });
+    }
+    return parts;
+  }
+
   function removeColumn() {
     const info = findBlockAndCol();
     if (!info || info.contentCol < 0) return;
     const { blockIndex, contentCol } = info;
     const newLines = rawLines.map((block, bi) => {
       if (bi !== blockIndex) return block;
-      return block.map(line => {
-        const pipeIdx = line.indexOf('|');
-        if (pipeIdx < 0) return line;
-        const label = line.substring(0, pipeIdx + 1);
-        const content = line.substring(pipeIdx + 1);
-        if (contentCol >= content.length) return line;
-        const [start, end] = spanAt(content, contentCol);
-        return label + content.substring(0, start) + content.substring(end);
+      const parts = getBlockContents(block, contentCol);
+      const maxWidth = Math.max(...parts.map(p => p ? p.end - p.start : 0));
+      return block.map((line, li) => {
+        const p = parts[li];
+        if (!p || contentCol >= p.content.length) return line;
+        const removeEnd = Math.min(p.start + maxWidth, p.content.length);
+        return p.label + p.content.substring(0, p.start) + p.content.substring(removeEnd);
       });
     });
     onedit(newLines.map(block => block.join('\n')).join('\n\n'));
@@ -163,14 +174,13 @@
     const { blockIndex, contentCol } = info;
     const newLines = rawLines.map((block, bi) => {
       if (bi !== blockIndex) return block;
-      return block.map(line => {
-        const pipeIdx = line.indexOf('|');
-        if (pipeIdx < 0) return line;
-        const label = line.substring(0, pipeIdx + 1);
-        const content = line.substring(pipeIdx + 1);
-        const [, end] = spanAt(content, contentCol);
-        const insertAt = Math.min(end, content.length);
-        return label + content.substring(0, insertAt) + '-' + content.substring(insertAt);
+      const parts = getBlockContents(block, contentCol);
+      const maxEnd = Math.max(...parts.map(p => p ? p.end : 0));
+      return block.map((line, li) => {
+        const p = parts[li];
+        if (!p) return line;
+        const insertAt = Math.min(maxEnd, p.content.length);
+        return p.label + p.content.substring(0, insertAt) + '-' + p.content.substring(insertAt);
       });
     });
     onedit(newLines.map(block => block.join('\n')).join('\n\n'));
