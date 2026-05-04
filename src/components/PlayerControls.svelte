@@ -39,8 +39,12 @@
     onvolumechange = () => {},
   } = $props();
 
+  // A speed of 0 (or negative) makes playback timing collapse to Infinity
+  // and stalls the transport, so we enforce the same minimum the slider uses.
+  const MIN_SPEED = 0.1;
+
   let progressPercent = $derived(
-    totalColumns > 0 ? (currentPosition / (totalColumns - 1)) * 100 : 0
+    totalColumns > 1 ? (currentPosition / (totalColumns - 1)) * 100 : 0
   );
 
   function togglePlay() {
@@ -57,20 +61,21 @@
 
   function handleSpeedInput(e) {
     const val = parseFloat(e.target.value);
-    if (!isNaN(val) && val >= 0) {
+    if (!isNaN(val) && val >= MIN_SPEED) {
       onspeedchange(val);
     }
   }
 
   function handleSpeedBlur(e) {
     const val = parseFloat(e.target.value);
-    if (isNaN(val) || val < 0) {
+    if (isNaN(val) || val < MIN_SPEED) {
+      onspeedchange(speed);
       e.target.value = speed.toFixed(2);
     }
   }
 
   function decrementSpeed() {
-    const newSpeed = Math.max(0, Math.round((speed - 0.1) * 100) / 100);
+    const newSpeed = Math.max(MIN_SPEED, Math.round((speed - 0.1) * 100) / 100);
     onspeedchange(newSpeed);
   }
 

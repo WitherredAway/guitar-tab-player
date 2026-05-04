@@ -112,13 +112,13 @@ export function parseTab(rawText) {
   let positionOffset = 0;
 
   for (const block of merged) {
-    const { events: blockEvents, totalPositions, posToCol } = parseBlock(block, tuning);
+    const { events: blockEvents, totalPositions, posToCol, posToWidth } = parseBlock(block, tuning);
     for (const event of blockEvents) {
       event.position += positionOffset;
     }
     timeline = timeline.concat(blockEvents);
     rawLines.push(block.lines);
-    colMaps.push({ posToCol, offset: positionOffset, totalPositions });
+    colMaps.push({ posToCol, posToWidth, offset: positionOffset, totalPositions });
     positionOffset += totalPositions;
   }
 
@@ -345,6 +345,7 @@ function parseBlock(block, tuning) {
   const maxLen = Math.max(...contents.map(s => s.length));
   const events = [];
   const posToCol = [];
+  const posToWidth = [];
   let pos = 0;
 
   // Track columns consumed by multi-digit frets per string
@@ -370,6 +371,7 @@ function parseBlock(block, tuning) {
     if (!hasDigit && hasTechnique) continue;
 
     posToCol[pos] = col;
+    posToWidth[pos] = 1;
 
     if (!hasDigit) {
       pos++;
@@ -390,6 +392,9 @@ function parseBlock(block, tuning) {
         endCol++;
       }
       consumed[s] = endCol;
+      // Track the widest digit run at this position so the visual highlight
+      // can cover the full multi-digit fret (e.g. "12" or "15").
+      if (endCol - col > posToWidth[pos]) posToWidth[pos] = endCol - col;
 
       const fret = parseInt(fretStr, 10);
       const technique = detectTechnique(line, endCol);
@@ -419,7 +424,7 @@ function parseBlock(block, tuning) {
 
   buildTechniqueChains(events);
 
-  return { events, totalPositions: pos, posToCol };
+  return { events, totalPositions: pos, posToCol, posToWidth };
 }
 
 /**
@@ -470,21 +475,6 @@ function findNextFret(line, idx) {
     return parseInt(fretStr, 10);
   }
   return null;
-}
-
-/**
- * Find the previous fret number before a technique marker.
- */
-function findPrevFret(line, idx) {
-  // Go back past the technique character
-  let i = idx - 2;
-  // Collect digits going backward
-  let digits = '';
-  while (i >= 0 && /\d/.test(line[i])) {
-    digits = line[i] + digits;
-    i--;
-  }
-  return digits.length > 0 ? parseInt(digits, 10) : null;
 }
 
 /**

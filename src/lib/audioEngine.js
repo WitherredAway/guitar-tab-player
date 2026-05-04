@@ -67,6 +67,28 @@ export function createAudioEngine() {
   let reverb = null;
   let volume = null;
 
+  // Pending setTimeout IDs for delayed chain triggers, so they can be
+  // canceled when playback is stopped.
+  const pendingTimeouts = new Set();
+
+  /**
+   * Trigger a note now or after a delay. Tracks the timer so it can be
+   * canceled by stopAll().
+   */
+  function scheduleTrigger(pitch, duration, delaySec, velocity) {
+    if (!sampler || !isLoaded) return;
+    if (delaySec <= 0) {
+      sampler.triggerAttackRelease(pitch, duration, undefined, velocity);
+      return;
+    }
+    const id = setTimeout(() => {
+      pendingTimeouts.delete(id);
+      if (!sampler || !isLoaded) return;
+      sampler.triggerAttackRelease(pitch, duration, undefined, velocity);
+    }, delaySec * 1000);
+    pendingTimeouts.add(id);
+  }
+
   /**
    * Initialize or switch the guitar sampler.
    *
@@ -128,7 +150,6 @@ export function createAudioEngine() {
   function playNotes(notes, tuning, duration = 0.5, stringVolumes, speed = 1) {
     if (!sampler || !isLoaded) return;
 
-    const now = Tone.now();
     const timeScale = 1 / speed;
 
     for (const note of notes) {
@@ -142,9 +163,10 @@ export function createAudioEngine() {
       const techParams = TECHNIQUE_PARAMS[note.technique];
       if (techParams) {
         const srcDur = techParams.sourceDurAbs ? techParams.sourceDurAbs * timeScale : duration * techParams.sourceDurMul;
-        sampler.triggerAttackRelease(pitch, srcDur, now, techParams.sourceVol * vol);
+        sampler.triggerAttackRelease(pitch, srcDur, undefined, techParams.sourceVol * vol);
 
-        // Schedule the full chain from this source
+        // Schedule the full chain from this source. Use scheduleTrigger so
+        // pause/stopAll can cancel the pending links.
         if (note.techniqueChain) {
           let cumDelay = 0;
           for (let ci = 0; ci < note.techniqueChain.length; ci++) {
@@ -156,20 +178,25 @@ export function createAudioEngine() {
             const linkDur = ci < note.techniqueChain.length - 1
               ? (linkParams ? (linkParams.sourceDurAbs ? linkParams.sourceDurAbs * timeScale : duration * linkParams.sourceDurMul) : duration * 0.5)
               : duration;
-            sampler.triggerAttackRelease(linkPitch, linkDur, now + cumDelay, linkVol * vol);
+            scheduleTrigger(linkPitch, linkDur, cumDelay, linkVol * vol);
           }
         } else if (note.targetFret != null) {
           const targetPitch = fretToPitch(note.openNote, note.targetFret, note.string, tuning);
-          sampler.triggerAttackRelease(targetPitch, duration, now + techParams.delay * timeScale, techParams.targetVol * vol);
+          scheduleTrigger(targetPitch, duration, techParams.delay * timeScale, techParams.targetVol * vol);
         }
       } else {
-        sampler.triggerAttackRelease(pitch, duration, now, 0.8 * vol);
+        sampler.triggerAttackRelease(pitch, duration, undefined, 0.8 * vol);
       }
     }
   }
 
-  /** Stop all currently playing notes. */
+  /**
+   * Stop all currently playing notes and cancel pending chain triggers so
+   * that techniques scheduled before pause don't keep playing afterward.
+   */
   function stopAll() {
+    for (const id of pendingTimeouts) clearTimeout(id);
+    pendingTimeouts.clear();
     if (sampler && isLoaded) {
       sampler.releaseAll();
     }
@@ -184,6 +211,8 @@ export function createAudioEngine() {
 
   /** Clean up all audio resources. */
   function dispose() {
+    for (const id of pendingTimeouts) clearTimeout(id);
+    pendingTimeouts.clear();
     if (sampler) {
       sampler.disconnect();
       sampler.dispose();

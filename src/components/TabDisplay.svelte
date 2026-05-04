@@ -37,21 +37,25 @@
   });
 
   /**
-   * Get the character column for the active position within a given block index.
+   * Get the character column and visual width for the active position within
+   * a given block index. Width covers multi-digit frets so the highlight
+   * spans e.g. both characters of "12".
    */
   function getActiveCol(blockIndex) {
-    if (activePosition < 0 || !colMaps[blockIndex]) return -1;
+    if (activePosition < 0 || !colMaps[blockIndex]) return { col: -1, width: 1 };
     const map = colMaps[blockIndex];
     const localPos = activePosition - map.offset;
-    if (localPos < 0 || localPos >= map.totalPositions) return -1;
-    return map.posToCol[localPos] ?? -1;
+    if (localPos < 0 || localPos >= map.totalPositions) return { col: -1, width: 1 };
+    const col = map.posToCol[localPos] ?? -1;
+    const width = map.posToWidth?.[localPos] ?? 1;
+    return { col, width };
   }
 
   /**
    * Split a tab line into segments: [before-highlight, highlight, after-highlight].
    */
   function renderLine(line, blockIndex) {
-    const col = getActiveCol(blockIndex);
+    const { col, width } = getActiveCol(blockIndex);
     if (col < 0) return [{ text: line, active: false }];
 
     const pipeIdx = line.indexOf('|');
@@ -63,10 +67,12 @@
 
     if (contentCol < 0 || contentCol >= content.length) return [{ text: line, active: false }];
 
+    const endCol = Math.min(contentCol + Math.max(1, width), content.length);
+
     const segments = [{ text: label, active: false }];
     if (contentCol > 0) segments.push({ text: content.substring(0, contentCol), active: false });
-    segments.push({ text: content.substring(contentCol, contentCol + 1), active: true });
-    if (contentCol + 1 < content.length) segments.push({ text: content.substring(contentCol + 1), active: false });
+    segments.push({ text: content.substring(contentCol, endCol), active: true });
+    if (endCol < content.length) segments.push({ text: content.substring(endCol), active: false });
     return segments;
   }
 

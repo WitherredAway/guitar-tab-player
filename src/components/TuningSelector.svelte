@@ -63,6 +63,27 @@
       onchange(detectedTuning.slice());
     }
   });
+
+  // Keep the custom tuning array in sync with the number of strings the
+  // current tab actually has. Without this, a 5-string tab paired with the
+  // "Custom" preset would still expose 6 dropdowns and emit a 6-string
+  // tuning to the engine.
+  $effect(() => {
+    if (detectedTuning.length === 0) return;
+    if (customTuning.length === detectedTuning.length) return;
+    const target = detectedTuning.length;
+    if (customTuning.length < target) {
+      customTuning = [
+        ...customTuning,
+        ...detectedTuning.slice(customTuning.length, target),
+      ];
+    } else {
+      customTuning = customTuning.slice(0, target);
+    }
+    if (selectedPreset === 'custom') {
+      onchange(customTuning.slice());
+    }
+  });
 </script>
 
 <div class="tuning-selector">
