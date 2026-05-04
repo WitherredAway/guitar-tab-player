@@ -41,8 +41,6 @@
 
   .theme-buttons {
     display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
     gap: 4px;
     padding: 4px;
     background: var(--bg-surface);
@@ -92,7 +90,10 @@
 
     .theme-btn {
       padding: 6px 8px;
-      font-size: 0.65rem;
+    }
+
+    .theme-label {
+      display: none;
     }
   }
 </style>
