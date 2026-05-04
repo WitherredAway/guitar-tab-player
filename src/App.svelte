@@ -10,7 +10,7 @@
   import ThemeSelector from './components/ThemeSelector.svelte';
 
   // Theme
-  let currentTheme = $state(localStorage.getItem('guitar-tab-theme') || 'midnight');
+  let currentTheme = $state(localStorage.getItem('guitar-tab-theme') || 'neumorphic');
 
   function handleThemeChange(theme) {
     currentTheme = theme;

@@ -1,13 +1,13 @@
 <script>
   /** @type {{ currentTheme: string, onchange: (theme: string) => void }} */
-  let { currentTheme = 'midnight', onchange = () => {} } = $props();
+  let { currentTheme = 'neumorphic', onchange = () => {} } = $props();
 
   const themes = [
-    { id: 'midnight', label: 'Midnight', icon: 'moon' },
     { id: 'neumorphic', label: 'Neumorphic', icon: 'layers' },
     { id: 'glassmorphic', label: 'Glass', icon: 'droplet' },
     { id: 'cyberpunk', label: 'Cyberpunk', icon: 'zap' },
     { id: 'retro', label: 'Retro', icon: 'disc' },
+    { id: 'midnight', label: 'Midnight', icon: 'moon' },
   ];
 </script>
 

@@ -1,32 +1,5 @@
-/* ───── Default (Midnight) theme ───── */
+/* ───── Default (Neumorphic) theme ───── */
 :root,
-[data-theme="midnight"] {
-  --bg: #0a0a0a;
-  --bg-surface: #17141f;
-  --bg-surface-hover: #1f1b2a;
-  --bg-input: #13111a;
-  --text: #c9b8e8;
-  --text-muted: #7a6b9a;
-  --text-heading: #e8dff5;
-  --accent: #d4bbff;
-  --accent-hover: #c5a6ff;
-  --accent-glow: rgba(212, 187, 255, 0.15);
-  --border: #2a2040;
-  --border-focus: #d4bbff;
-  --success: #a3e4b8;
-  --warning: #f0d4a0;
-  --error: #f0a0a0;
-  --mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', ui-monospace, Consolas, monospace;
-  --sans: 'Inter', system-ui, -apple-system, sans-serif;
-  --radius: 8px;
-  --radius-lg: 12px;
-  --shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-  --surface-blur: none;
-  --surface-bg: var(--bg-surface);
-  --play-btn-text: #0a0a0a;
-}
-
-/* ───── Neumorphic ───── */
 [data-theme="neumorphic"] {
   --bg: #2a2a3a;
   --bg-surface: #2e2e40;
@@ -43,6 +16,8 @@
   --success: #86efac;
   --warning: #fcd34d;
   --error: #fca5a5;
+  --mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', ui-monospace, Consolas, monospace;
+  --sans: 'Inter', system-ui, -apple-system, sans-serif;
   --radius: 16px;
   --radius-lg: 20px;
   --shadow: 6px 6px 14px #1a1a28, -6px -6px 14px #3e3e56;
@@ -125,6 +100,31 @@
   --surface-blur: none;
   --surface-bg: var(--bg-surface);
   --play-btn-text: #1a1410;
+}
+
+/* ───── Midnight ───── */
+[data-theme="midnight"] {
+  --bg: #0a0a0a;
+  --bg-surface: #17141f;
+  --bg-surface-hover: #1f1b2a;
+  --bg-input: #13111a;
+  --text: #c9b8e8;
+  --text-muted: #7a6b9a;
+  --text-heading: #e8dff5;
+  --accent: #d4bbff;
+  --accent-hover: #c5a6ff;
+  --accent-glow: rgba(212, 187, 255, 0.15);
+  --border: #2a2040;
+  --border-focus: #d4bbff;
+  --success: #a3e4b8;
+  --warning: #f0d4a0;
+  --error: #f0a0a0;
+  --radius: 8px;
+  --radius-lg: 12px;
+  --shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  --surface-blur: none;
+  --surface-bg: var(--bg-surface);
+  --play-btn-text: #0a0a0a;
 }
 
 *,
