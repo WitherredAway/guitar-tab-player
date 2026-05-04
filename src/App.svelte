@@ -63,7 +63,11 @@
   async function loadInstrument(type) {
     isLoading = true;
     await engine.loadInstrument(type);
-    isLoaded = true;
+    // Apply current master volume to the freshly initialized engine so the
+    // slider value matches the actual output level from the start.
+    const db = masterVolume <= 0 ? -Infinity : 20 * Math.log10(masterVolume);
+    engine.setVolume(db);
+    isLoaded = engine.isLoaded;
     isLoading = false;
   }
 
