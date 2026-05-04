@@ -26,8 +26,11 @@
     else relativeTime = `${days} day${days !== 1 ? 's' : ''} ago`;
   }
 
-  updateRelativeTime();
-  setInterval(updateRelativeTime, 60000);
+  $effect(() => {
+    updateRelativeTime();
+    const id = setInterval(updateRelativeTime, 60000);
+    return () => clearInterval(id);
+  });
 
   // State
   let rawTabText = $state('');
