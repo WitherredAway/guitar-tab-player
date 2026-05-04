@@ -20,7 +20,6 @@
    *   onseek: (position: number) => void,
    *   volume: number,
    *   onvolumechange: (volume: number) => void,
-   *   onuiclick: () => void,
    * }} */
   let {
     isPlaying = false,
@@ -38,7 +37,6 @@
     onseek = () => {},
     volume = 0.8,
     onvolumechange = () => {},
-    onuiclick = () => {},
   } = $props();
 
   // A speed of 0 (or negative) makes playback timing collapse to Infinity
@@ -77,13 +75,11 @@
   }
 
   function decrementSpeed() {
-    onuiclick();
     const newSpeed = Math.max(MIN_SPEED, Math.round((speed - 0.1) * 100) / 100);
     onspeedchange(newSpeed);
   }
 
   function incrementSpeed() {
-    onuiclick();
     const newSpeed = Math.round((speed + 0.1) * 100) / 100;
     onspeedchange(newSpeed);
   }
