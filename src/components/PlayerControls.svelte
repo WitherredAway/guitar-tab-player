@@ -248,11 +248,14 @@
 
 <style>
   .player-controls {
-    background: var(--bg-surface);
+    background: var(--surface-bg, var(--bg-surface));
     border: 1px solid var(--border);
     border-radius: var(--radius-lg);
     padding: 12px 20px;
     width: 100%;
+    box-shadow: var(--shadow);
+    backdrop-filter: var(--surface-blur, none);
+    -webkit-backdrop-filter: var(--surface-blur, none);
   }
 
   .player-controls.disabled {
@@ -321,14 +324,14 @@
 
   .play-btn {
     background: var(--accent);
-    color: #0a0a0a;
+    color: var(--play-btn-text, #0a0a0a);
     width: 44px;
     height: 44px;
   }
 
   .play-btn:hover:not(:disabled) {
     background: var(--accent-hover);
-    color: #0a0a0a;
+    color: var(--play-btn-text, #0a0a0a);
   }
 
   .speed-control {

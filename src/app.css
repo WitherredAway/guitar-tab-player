@@ -1,4 +1,6 @@
-:root {
+/* ───── Default (Midnight) theme ───── */
+:root,
+[data-theme="midnight"] {
   --bg: #0a0a0a;
   --bg-surface: #17141f;
   --bg-surface-hover: #1f1b2a;
@@ -19,6 +21,110 @@
   --radius: 8px;
   --radius-lg: 12px;
   --shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  --surface-blur: none;
+  --surface-bg: var(--bg-surface);
+  --play-btn-text: #0a0a0a;
+}
+
+/* ───── Neumorphic ───── */
+[data-theme="neumorphic"] {
+  --bg: #2a2a3a;
+  --bg-surface: #2e2e40;
+  --bg-surface-hover: #363650;
+  --bg-input: #262636;
+  --text: #c8c8e0;
+  --text-muted: #8080a0;
+  --text-heading: #e4e4f8;
+  --accent: #a78bfa;
+  --accent-hover: #8b5cf6;
+  --accent-glow: rgba(167, 139, 250, 0.12);
+  --border: transparent;
+  --border-focus: #a78bfa;
+  --success: #86efac;
+  --warning: #fcd34d;
+  --error: #fca5a5;
+  --radius: 16px;
+  --radius-lg: 20px;
+  --shadow: 6px 6px 14px #1a1a28, -6px -6px 14px #3e3e56;
+  --shadow-inset: inset 3px 3px 8px #1a1a28, inset -3px -3px 8px #3e3e56;
+  --surface-blur: none;
+  --surface-bg: var(--bg-surface);
+  --play-btn-text: #1a1a2e;
+}
+
+/* ───── Glassmorphic ───── */
+[data-theme="glassmorphic"] {
+  --bg: #0f0f1a;
+  --bg-surface: rgba(255, 255, 255, 0.06);
+  --bg-surface-hover: rgba(255, 255, 255, 0.1);
+  --bg-input: rgba(255, 255, 255, 0.04);
+  --text: #d4d4e8;
+  --text-muted: #8888aa;
+  --text-heading: #f0f0ff;
+  --accent: #818cf8;
+  --accent-hover: #6366f1;
+  --accent-glow: rgba(129, 140, 248, 0.15);
+  --border: rgba(255, 255, 255, 0.08);
+  --border-focus: #818cf8;
+  --success: #6ee7b7;
+  --warning: #fbbf24;
+  --error: #f87171;
+  --radius: 16px;
+  --radius-lg: 20px;
+  --shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  --surface-blur: blur(16px);
+  --surface-bg: rgba(255, 255, 255, 0.06);
+  --play-btn-text: #0f0f1a;
+}
+
+/* ───── Cyberpunk ───── */
+[data-theme="cyberpunk"] {
+  --bg: #0a0a12;
+  --bg-surface: #12121f;
+  --bg-surface-hover: #1a1a2e;
+  --bg-input: #0e0e18;
+  --text: #e0e0ff;
+  --text-muted: #6a6a9e;
+  --text-heading: #f0f0ff;
+  --accent: #00ffcc;
+  --accent-hover: #00e6b8;
+  --accent-glow: rgba(0, 255, 204, 0.12);
+  --border: #1a1a3a;
+  --border-focus: #00ffcc;
+  --success: #00ff88;
+  --warning: #ffcc00;
+  --error: #ff4466;
+  --radius: 4px;
+  --radius-lg: 6px;
+  --shadow: 0 0 20px rgba(0, 255, 204, 0.08);
+  --surface-blur: none;
+  --surface-bg: var(--bg-surface);
+  --play-btn-text: #0a0a12;
+}
+
+/* ───── Retro ───── */
+[data-theme="retro"] {
+  --bg: #1a1410;
+  --bg-surface: #241e18;
+  --bg-surface-hover: #302820;
+  --bg-input: #1e1812;
+  --text: #d4c4a0;
+  --text-muted: #8a7a5a;
+  --text-heading: #f0e4c8;
+  --accent: #e8a040;
+  --accent-hover: #f0b050;
+  --accent-glow: rgba(232, 160, 64, 0.12);
+  --border: #3a3020;
+  --border-focus: #e8a040;
+  --success: #88c878;
+  --warning: #e8c040;
+  --error: #d86040;
+  --radius: 6px;
+  --radius-lg: 10px;
+  --shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+  --surface-blur: none;
+  --surface-bg: var(--bg-surface);
+  --play-btn-text: #1a1410;
 }
 
 *,
@@ -129,4 +235,33 @@ input[type='range'].styled-slider::-moz-range-thumb {
   border: none;
   cursor: pointer;
   box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
+}
+
+/* ───── Neumorphic theme overrides ───── */
+[data-theme="neumorphic"] select,
+[data-theme="neumorphic"] textarea,
+[data-theme="neumorphic"] input[type="text"] {
+  border: none;
+  box-shadow: inset 3px 3px 8px #1a1a28, inset -3px -3px 8px #3e3e56;
+}
+
+[data-theme="neumorphic"] select:focus,
+[data-theme="neumorphic"] textarea:focus,
+[data-theme="neumorphic"] input[type="text"]:focus {
+  box-shadow: inset 3px 3px 8px #1a1a28, inset -3px -3px 8px #3e3e56, 0 0 0 2px var(--accent-glow);
+}
+
+/* ───── Glassmorphic theme overrides ───── */
+[data-theme="glassmorphic"] select,
+[data-theme="glassmorphic"] textarea,
+[data-theme="glassmorphic"] input[type="text"] {
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* ───── Cyberpunk theme overrides ───── */
+[data-theme="cyberpunk"] select:focus,
+[data-theme="cyberpunk"] textarea:focus,
+[data-theme="cyberpunk"] input[type="text"]:focus {
+  box-shadow: 0 0 8px var(--accent-glow), 0 0 0 1px var(--accent);
 }

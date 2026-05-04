@@ -234,6 +234,9 @@
     border: 1px solid var(--border);
     border-radius: var(--radius-lg);
     overflow: hidden;
+    box-shadow: var(--shadow);
+    backdrop-filter: var(--surface-blur, none);
+    -webkit-backdrop-filter: var(--surface-blur, none);
   }
 
   .tab-header {
@@ -241,7 +244,7 @@
     justify-content: space-between;
     align-items: center;
     padding: 8px 16px;
-    background: var(--bg-surface);
+    background: var(--surface-bg, var(--bg-surface));
     border-bottom: 1px solid var(--border);
   }
 
