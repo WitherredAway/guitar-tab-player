@@ -25,20 +25,27 @@ export const TUNING_PRESETS = {
 const NOTE_NAMES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
 
 /**
- * Default octave assignments for standard tuning (low E2 → high E4).
- * Maps common open-string note names to their MIDI-style note+octave.
+ * Compute the octave for each string based on position in the tuning.
+ * Starts at octave 2 for the lowest string and increments whenever
+ * a string's semitone is <= the previous string's (indicating a wrap).
+ *
+ * Standard tuning yields: E2 A2 D3 G3 B3 E4
+ * Open G yields:          D2 G2 D3 G3 B3 D4
  */
-const BASE_NOTES = {
-  'C':  'C3', 'C#': 'C#3', 'Db': 'Db3',
-  'D':  'D3', 'D#': 'D#3', 'Eb': 'Eb3',
-  'E':  'E2', 'F':  'F2',  'F#': 'F#2', 'Gb': 'Gb2',
-  'G':  'G2', 'G#': 'G#2', 'Ab': 'Ab2',
-  'A':  'A2', 'A#': 'A#2', 'Bb': 'Bb2',
-  'B':  'B2',
-  // Lowercase variants indicate higher octave strings
-  'e':  'E4', 'b':  'B3', 'g':  'G3',
-  'd':  'D3', 'a':  'A2',
-};
+function computeOctaves(tuningLabels) {
+  let currentOctave = 2;
+  let prevSemitone = -1;
+  const result = [];
+  for (const label of tuningLabels) {
+    const semitone = noteToSemitone(label);
+    if (prevSemitone >= 0 && semitone <= prevSemitone) {
+      currentOctave++;
+    }
+    result.push(currentOctave);
+    prevSemitone = semitone;
+  }
+  return result;
+}
 
 /**
  * Convert a note name to its semitone index (0–11).
@@ -59,21 +66,13 @@ function noteToSemitone(note) {
  * @param {string} openNote - The string's open note label from tuning
  * @param {number} fret - Fret number (0 = open)
  * @param {number} stringIndex - Index of the string (0 = lowest/thickest)
- * @param {number} totalStrings - Total number of strings
+ * @param {string[]} tuning - Full tuning array (e.g. ['E','A','D','G','B','e'])
  * @returns {string} Pitch in scientific notation
  */
-export function fretToPitch(openNote, fret, stringIndex, totalStrings) {
-  // Determine base note with octave
-  let baseNote = BASE_NOTES[openNote];
-  if (!baseNote) {
-    // Assign octave based on string position (lower strings = lower octave)
-    const octave = stringIndex < totalStrings / 2 ? 2 : 3;
-    baseNote = openNote.charAt(0).toUpperCase() + openNote.slice(1) + octave;
-  }
-
-  const notePart = baseNote.replace(/\d+$/, '');
-  const octave = parseInt(baseNote.match(/\d+$/)[0], 10);
-  const baseSemitone = noteToSemitone(notePart);
+export function fretToPitch(openNote, fret, stringIndex, tuning) {
+  const octaves = computeOctaves(tuning);
+  const octave = octaves[stringIndex] ?? 3;
+  const baseSemitone = noteToSemitone(openNote);
 
   const totalSemitones = baseSemitone + fret;
   const newNoteIndex = ((totalSemitones % 12) + 12) % 12;

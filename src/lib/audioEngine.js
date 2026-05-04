@@ -137,7 +137,7 @@ export function createAudioEngine() {
       // Chain targets are already scheduled by the chain source — skip
       if (note.isChainTarget || note.prevTechnique) continue;
 
-      const pitch = fretToPitch(note.openNote, note.fret, note.string, tuning.length);
+      const pitch = fretToPitch(note.openNote, note.fret, note.string, tuning);
 
       const techParams = TECHNIQUE_PARAMS[note.technique];
       if (techParams) {
@@ -151,7 +151,7 @@ export function createAudioEngine() {
             const link = note.techniqueChain[ci];
             const linkParams = TECHNIQUE_PARAMS[link.technique];
             cumDelay += (linkParams ? linkParams.delay : 0.08) * timeScale;
-            const linkPitch = fretToPitch(note.openNote, link.fret, note.string, tuning.length);
+            const linkPitch = fretToPitch(note.openNote, link.fret, note.string, tuning);
             const linkVol = linkParams ? linkParams.targetVol : 0.55;
             const linkDur = ci < note.techniqueChain.length - 1
               ? (linkParams ? (linkParams.sourceDurAbs ? linkParams.sourceDurAbs * timeScale : duration * linkParams.sourceDurMul) : duration * 0.5)
@@ -159,7 +159,7 @@ export function createAudioEngine() {
             sampler.triggerAttackRelease(linkPitch, linkDur, now + cumDelay, linkVol * vol);
           }
         } else if (note.targetFret != null) {
-          const targetPitch = fretToPitch(note.openNote, note.targetFret, note.string, tuning.length);
+          const targetPitch = fretToPitch(note.openNote, note.targetFret, note.string, tuning);
           sampler.triggerAttackRelease(targetPitch, duration, now + techParams.delay * timeScale, techParams.targetVol * vol);
         }
       } else {
