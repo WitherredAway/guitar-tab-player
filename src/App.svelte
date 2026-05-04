@@ -400,7 +400,7 @@
     bottom: 0;
     left: 0;
     right: 0;
-    padding: 16px 24px 8px;
+    padding: 16px 24px calc(8px + env(safe-area-inset-bottom, 0px));
     background: var(--bg);
     border-top: 1px solid var(--border);
     z-index: 100;
