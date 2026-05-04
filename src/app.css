@@ -157,7 +157,7 @@ body {
   font-family: var(--sans);
   background: var(--bg);
   color: var(--text);
-  min-height: 100vh;
+  min-height: 100dvh;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -170,7 +170,7 @@ body {
 #app {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  min-height: 100dvh;
 }
 
 button {
@@ -281,6 +281,22 @@ input[type='range'].styled-slider::-moz-range-thumb {
 [data-theme="glassmorphic"] input[type="text"] {
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
+}
+
+[data-theme="glassmorphic"] ::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+[data-theme="glassmorphic"] ::-webkit-scrollbar-thumb {
+  background: rgba(192, 132, 252, 0.3);
+}
+
+[data-theme="glassmorphic"] ::-webkit-scrollbar-thumb:hover {
+  background: rgba(192, 132, 252, 0.5);
+}
+
+[data-theme="glassmorphic"] * {
+  scrollbar-color: rgba(192, 132, 252, 0.3) rgba(255, 255, 255, 0.04);
 }
 
 /* ───── Cyberpunk theme overrides ───── */
