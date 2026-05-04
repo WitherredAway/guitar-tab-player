@@ -277,31 +277,33 @@
       </section>
     {/if}
 
-    <section class="player-section">
-      <PlayerControls
-        {isPlaying}
-        currentPosition={activePosition}
-        totalColumns={parsedData.totalColumns}
-        {speed}
-        {isLoaded}
-        onplay={handlePlay}
-        onpause={handlePause}
-        onprev={() => seekTo(activePosition - 1)}
-        onnext={() => seekTo(activePosition + 1)}
-        onfirst={() => seekTo(0)}
-        onlast={() => seekTo(parsedData.totalColumns - 1)}
-        onspeedchange={handleSpeedChange}
-        onseek={seekTo}
-        volume={masterVolume}
-        onvolumechange={handleVolumeChange}
-      />
-    </section>
   </div>
-
-  <footer class="site-footer">
-    Last updated {buildTime.toLocaleString()} ({relativeTime})
-  </footer>
 </main>
+
+<section class="player-section">
+  <div class="player-inner">
+    <PlayerControls
+      {isPlaying}
+      currentPosition={activePosition}
+      totalColumns={parsedData.totalColumns}
+      {speed}
+      {isLoaded}
+      onplay={handlePlay}
+      onpause={handlePause}
+      onprev={() => seekTo(activePosition - 1)}
+      onnext={() => seekTo(activePosition + 1)}
+      onfirst={() => seekTo(0)}
+      onlast={() => seekTo(parsedData.totalColumns - 1)}
+      onspeedchange={handleSpeedChange}
+      onseek={seekTo}
+      volume={masterVolume}
+      onvolumechange={handleVolumeChange}
+    />
+    <footer class="site-footer">
+      Last updated {buildTime.toLocaleString(undefined, { hour: '2-digit', minute: '2-digit', hour12: false, year: 'numeric', month: 'short', day: 'numeric' })} ({relativeTime})
+    </footer>
+  </div>
+</section>
 
 <style>
   main {
@@ -382,22 +384,27 @@
     bottom: 0;
     left: 0;
     right: 0;
-    padding: 16px 24px;
+    padding: 16px 24px 8px;
     background: var(--bg);
     border-top: 1px solid var(--border);
     z-index: 100;
   }
 
-  .player-section :global(.player-controls) {
+  .player-inner {
     max-width: 1100px;
     margin: 0 auto;
   }
 
+  .player-inner :global(.player-controls) {
+    width: 100%;
+  }
+
   .site-footer {
     text-align: center;
-    padding: 24px 0 8px;
-    font-size: 0.8rem;
+    padding: 6px 0 0;
+    font-size: 0.75rem;
     color: var(--text-muted);
+    opacity: 0.7;
   }
 
   @media (max-width: 640px) {
