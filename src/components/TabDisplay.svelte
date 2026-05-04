@@ -273,9 +273,9 @@
   }
 
   .edit-btn:hover {
-    background: var(--accent);
-    color: #0a0a0a;
-    border-color: var(--accent);
+    background: var(--bg-surface);
+    color: var(--text-heading);
+    border-color: var(--border-focus);
     transform: translateY(-1px);
   }
 
