@@ -134,7 +134,8 @@
     // Chain targets: advance cursor at technique speed (synced with audio)
     const isChainStep = nextColumn.notes.some(n => n.isChainTarget || n.prevTechnique);
     if (isChainStep) {
-      const chainDelayMs = (nextColumn.notes[0].chainDelay || 0.08) * 1000 / speed;
+      const chainNote = nextColumn.notes.find(n => n.isChainTarget || n.prevTechnique);
+      const chainDelayMs = (chainNote.chainDelay || 0.08) * 1000 / speed;
       currentIndex++;
       playInterval = setTimeout(() => playCurrentAndAdvance(), chainDelayMs);
       return;
