@@ -20,6 +20,7 @@
    *   onseek: (position: number) => void,
    *   volume: number,
    *   onvolumechange: (volume: number) => void,
+   *   onuiclick: () => void,
    * }} */
   let {
     isPlaying = false,
@@ -37,6 +38,7 @@
     onseek = () => {},
     volume = 0.8,
     onvolumechange = () => {},
+    onuiclick = () => {},
   } = $props();
 
   // A speed of 0 (or negative) makes playback timing collapse to Infinity
@@ -75,11 +77,13 @@
   }
 
   function decrementSpeed() {
+    onuiclick();
     const newSpeed = Math.max(MIN_SPEED, Math.round((speed - 0.1) * 100) / 100);
     onspeedchange(newSpeed);
   }
 
   function incrementSpeed() {
+    onuiclick();
     const newSpeed = Math.round((speed + 0.1) * 100) / 100;
     onspeedchange(newSpeed);
   }
@@ -200,59 +204,63 @@
       </button>
     </div>
 
-    <!-- Speed control -->
-    <div class="speed-control">
-      <input
-        class="speed-input"
-        type="text"
-        value={speed.toFixed(2)}
-        oninput={handleSpeedInput}
-        onblur={handleSpeedBlur}
-        aria-label="Speed multiplier"
-      />
-      <span class="speed-x">x</span>
-      <button class="speed-btn" onclick={decrementSpeed} aria-label="Decrease speed">-</button>
-      <input
-        id="speed-slider"
-        type="range"
-        class="styled-slider"
-        min="0.1"
-        max="4"
-        step="0.05"
-        value={Math.min(4, speed)}
-        oninput={handleSpeedChange}
-        style="background: linear-gradient(to right, var(--accent) {((Math.min(4, speed) - 0.1) / 3.9 * 100)}%, var(--bg-input) {((Math.min(4, speed) - 0.1) / 3.9 * 100)}%);"
-      />
-      <button class="speed-btn" onclick={incrementSpeed} aria-label="Increase speed">+</button>
-    </div>
+    <!-- Right side: speed + volume -->
+    <div class="right-controls">
+      <div class="speed-control">
+        <input
+          class="speed-input"
+          type="text"
+          value={speed.toFixed(2)}
+          oninput={handleSpeedInput}
+          onblur={handleSpeedBlur}
+          aria-label="Speed multiplier"
+        />
+        <span class="speed-x">x</span>
+        <button class="speed-btn" onclick={decrementSpeed} aria-label="Decrease speed">-</button>
+        <input
+          id="speed-slider"
+          type="range"
+          class="styled-slider"
+          min="0.1"
+          max="4"
+          step="0.05"
+          value={Math.min(4, speed)}
+          oninput={handleSpeedChange}
+          style="background: linear-gradient(to right, var(--accent) {((Math.min(4, speed) - 0.1) / 3.9 * 100)}%, var(--bg-input) {((Math.min(4, speed) - 0.1) / 3.9 * 100)}%);"
+        />
+        <button class="speed-btn" onclick={incrementSpeed} aria-label="Increase speed">+</button>
+      </div>
 
-    <!-- Volume control -->
-    <div class="volume-control">
-      <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16" class="volume-icon">
-        <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3A4.5 4.5 0 0014 8.5v7a4.49 4.49 0 002.5-3.5z" />
-      </svg>
-      <input
-        type="range"
-        class="styled-slider master-volume-slider"
-        min="0"
-        max="1"
-        step="0.05"
-        value={volume}
-        oninput={handleVolumeInput}
-        aria-label="Master volume"
-        style="background: linear-gradient(to right, var(--accent) {(volume * 100)}%, var(--bg-input) {(volume * 100)}%);"
-      />
+      <div class="volume-control">
+        <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16" class="volume-icon">
+          <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3A4.5 4.5 0 0014 8.5v7a4.49 4.49 0 002.5-3.5z" />
+        </svg>
+        <input
+          type="range"
+          class="styled-slider master-volume-slider"
+          min="0"
+          max="1"
+          step="0.05"
+          value={volume}
+          oninput={handleVolumeInput}
+          aria-label="Master volume"
+          style="background: linear-gradient(to right, var(--accent) {(volume * 100)}%, var(--bg-input) {(volume * 100)}%);"
+        />
+      </div>
     </div>
   </div>
 </div>
 
 <style>
   .player-controls {
-    background: var(--bg-surface);
+    background: var(--surface-bg, var(--bg-surface));
     border: 1px solid var(--border);
     border-radius: var(--radius-lg);
     padding: 12px 20px;
     width: 100%;
+    box-shadow: var(--shadow);
+    backdrop-filter: var(--surface-blur, none);
+    -webkit-backdrop-filter: var(--surface-blur, none);
   }
 
   .player-controls.disabled {
@@ -272,8 +280,15 @@
     gap: 16px;
   }
 
-  .position-display, .speed-control {
+  .position-display, .right-controls {
     flex: 1;
+  }
+
+  .right-controls {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    justify-content: flex-end;
   }
 
   .position-display {
@@ -298,20 +313,27 @@
   }
 
   .control-btn {
-    background: none;
-    border: none;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
     color: var(--text);
     padding: 8px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: background 0.2s, color 0.2s;
+    transition: all 0.2s ease;
+    box-shadow: var(--btn-shadow, none);
   }
 
   .control-btn:hover:not(:disabled) {
     background: var(--bg-surface-hover);
     color: var(--text-heading);
+    transform: translateY(-1px);
+  }
+
+  .control-btn:active:not(:disabled) {
+    transform: translateY(1px) scale(0.95);
+    box-shadow: var(--btn-shadow-active, none);
   }
 
   .control-btn:disabled {
@@ -321,14 +343,22 @@
 
   .play-btn {
     background: var(--accent);
-    color: #0a0a0a;
+    color: var(--play-btn-text, #0a0a0a);
     width: 44px;
     height: 44px;
+    box-shadow: var(--play-shadow, 0 2px 8px var(--accent-glow));
   }
 
   .play-btn:hover:not(:disabled) {
     background: var(--accent-hover);
-    color: #0a0a0a;
+    color: var(--play-btn-text, #0a0a0a);
+    box-shadow: var(--play-shadow-hover, 0 4px 16px var(--accent-glow));
+    transform: translateY(-2px);
+  }
+
+  .play-btn:active:not(:disabled) {
+    transform: translateY(1px) scale(0.93);
+    box-shadow: var(--play-shadow-active, 0 1px 4px var(--accent-glow));
   }
 
   .speed-control {
@@ -336,7 +366,6 @@
     align-items: center;
     gap: 8px;
     min-width: 120px;
-    justify-content: flex-end;
   }
 
   .speed-input {
@@ -376,13 +405,20 @@
     justify-content: center;
     cursor: pointer;
     padding: 0;
-    transition: background 0.2s, border-color 0.2s;
+    transition: all 0.2s ease;
+    box-shadow: var(--btn-shadow, none);
   }
 
   .speed-btn:hover {
     background: var(--accent);
     color: #0a0a0a;
     border-color: var(--accent);
+    transform: translateY(-1px);
+  }
+
+  .speed-btn:active {
+    transform: translateY(1px) scale(0.93);
+    box-shadow: var(--btn-shadow-active, none);
   }
 
   .speed-control input[type='range'] {
@@ -427,20 +463,19 @@
       justify-content: center;
     }
 
-    .speed-control {
+    .right-controls {
       order: 2;
       flex: 0 0 auto;
-      min-width: auto;
+      flex-wrap: wrap;
       justify-content: center;
+    }
+
+    .speed-control {
+      min-width: auto;
     }
 
     .speed-control input[type='range'] {
       width: 60px;
-    }
-
-    .volume-control {
-      order: 2;
-      flex: 0 0 auto;
     }
   }
 </style>

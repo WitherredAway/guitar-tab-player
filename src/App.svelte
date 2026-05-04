@@ -7,6 +7,23 @@
   import PlayerControls from './components/PlayerControls.svelte';
   import TabDisplay from './components/TabDisplay.svelte';
   import StringVolumes from './components/StringVolumes.svelte';
+  import ThemeSelector from './components/ThemeSelector.svelte';
+  import { playClick } from './lib/clickSound.js';
+
+  // Theme
+  let currentTheme = $state(localStorage.getItem('guitar-tab-theme') || 'neumorphic');
+
+  function handleThemeChange(theme) {
+    currentTheme = theme;
+    localStorage.setItem('guitar-tab-theme', theme);
+    document.documentElement.setAttribute('data-theme', theme);
+    playClick(theme);
+  }
+
+  // Apply saved theme on mount
+  $effect(() => {
+    document.documentElement.setAttribute('data-theme', currentTheme);
+  });
 
   // Build timestamp injected by Vite at build time
   const buildTime = new Date(__BUILD_TIME__);
@@ -229,6 +246,7 @@
   <header>
     <h1>Guitar Tab Player</h1>
     <p class="subtitle">Paste your guitar tablature and listen to it played back</p>
+    <ThemeSelector {currentTheme} onchange={handleThemeChange} />
   </header>
 
   <div class="content">
@@ -273,6 +291,7 @@
           {isPlaying}
           onseek={seekTo}
           onedit={handleTabInput}
+          onuiclick={() => playClick(currentTheme)}
         />
       </section>
     {/if}
@@ -288,16 +307,17 @@
       totalColumns={parsedData.totalColumns}
       {speed}
       {isLoaded}
-      onplay={handlePlay}
-      onpause={handlePause}
-      onprev={() => seekTo(activePosition - 1)}
-      onnext={() => seekTo(activePosition + 1)}
-      onfirst={() => seekTo(0)}
-      onlast={() => seekTo(parsedData.totalColumns - 1)}
+      onplay={() => { playClick(currentTheme); handlePlay(); }}
+      onpause={() => { playClick(currentTheme); handlePause(); }}
+      onprev={() => { playClick(currentTheme); seekTo(activePosition - 1); }}
+      onnext={() => { playClick(currentTheme); seekTo(activePosition + 1); }}
+      onfirst={() => { playClick(currentTheme); seekTo(0); }}
+      onlast={() => { playClick(currentTheme); seekTo(parsedData.totalColumns - 1); }}
       onspeedchange={handleSpeedChange}
       onseek={seekTo}
       volume={masterVolume}
       onvolumechange={handleVolumeChange}
+      onuiclick={() => playClick(currentTheme)}
     />
     <footer class="site-footer">
       Last updated {buildTime.toLocaleString(undefined, { hour: '2-digit', minute: '2-digit', hour12: false, year: 'numeric', month: 'short', day: 'numeric' })} ({relativeTime})
@@ -388,6 +408,8 @@
     background: var(--bg);
     border-top: 1px solid var(--border);
     z-index: 100;
+    backdrop-filter: var(--surface-blur);
+    -webkit-backdrop-filter: var(--surface-blur);
   }
 
   .player-inner {
