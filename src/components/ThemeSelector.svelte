@@ -56,10 +56,14 @@
     display: flex;
     justify-content: center;
     padding: 8px 0;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
   }
 
   .theme-buttons {
     display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
     gap: 4px;
     padding: 4px;
     background: var(--bg-surface);
@@ -109,10 +113,7 @@
 
     .theme-btn {
       padding: 6px 8px;
-    }
-
-    .theme-label {
-      display: none;
+      font-size: 0.65rem;
     }
   }
 </style>
