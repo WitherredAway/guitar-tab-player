@@ -11,6 +11,7 @@
    *   isPlaying: boolean,
    *   onseek: (position: number) => void,
    *   onedit: (text: string) => void,
+   *   onuiclick: () => void,
    * }} */
   let {
     rawLines = [],
@@ -20,6 +21,7 @@
     isPlaying = false,
     onseek = () => {},
     onedit = () => {},
+    onuiclick = () => {},
   } = $props();
 
   let editing = $state(false);
@@ -104,16 +106,19 @@
   }
 
   function startEditing() {
+    onuiclick();
     editText = rawLines.map(block => block.join('\n')).join('\n\n');
     editing = true;
   }
 
   function saveEdit() {
+    onuiclick();
     editing = false;
     onedit(editText);
   }
 
   function cancelEdit() {
+    onuiclick();
     editing = false;
   }
 
@@ -157,6 +162,7 @@
   }
 
   function removeColumn() {
+    onuiclick();
     const info = findBlockAndCol();
     if (!info || info.contentCol < 0) return;
     const { blockIndex, contentCol } = info;
@@ -175,6 +181,7 @@
   }
 
   function insertColumn() {
+    onuiclick();
     const info = findBlockAndCol();
     if (!info || info.contentCol < 0) return;
     const { blockIndex, contentCol } = info;
@@ -268,13 +275,20 @@
     background: var(--bg-surface-hover);
     color: var(--text-heading);
     cursor: pointer;
-    transition: background 0.2s, border-color 0.2s;
+    transition: all 0.2s ease;
+    box-shadow: var(--btn-shadow, none);
   }
 
   .edit-btn:hover {
     background: var(--accent);
     color: #0a0a0a;
     border-color: var(--accent);
+    transform: translateY(-1px);
+  }
+
+  .edit-btn:active {
+    transform: translateY(1px) scale(0.95);
+    box-shadow: var(--btn-shadow-active, none);
   }
 
   .cancel-btn {

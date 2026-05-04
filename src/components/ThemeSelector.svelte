@@ -70,6 +70,11 @@
   .theme-btn:hover {
     color: var(--text-heading);
     background: var(--bg-surface-hover);
+    transform: translateY(-1px);
+  }
+
+  .theme-btn:active {
+    transform: translateY(1px) scale(0.95);
   }
 
   .theme-btn.active {

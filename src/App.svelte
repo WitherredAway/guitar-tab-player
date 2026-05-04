@@ -8,6 +8,7 @@
   import TabDisplay from './components/TabDisplay.svelte';
   import StringVolumes from './components/StringVolumes.svelte';
   import ThemeSelector from './components/ThemeSelector.svelte';
+  import { playClick } from './lib/clickSound.js';
 
   // Theme
   let currentTheme = $state(localStorage.getItem('guitar-tab-theme') || 'neumorphic');
@@ -16,6 +17,7 @@
     currentTheme = theme;
     localStorage.setItem('guitar-tab-theme', theme);
     document.documentElement.setAttribute('data-theme', theme);
+    playClick(theme);
   }
 
   // Apply saved theme on mount
@@ -289,6 +291,7 @@
           {isPlaying}
           onseek={seekTo}
           onedit={handleTabInput}
+          onuiclick={() => playClick(currentTheme)}
         />
       </section>
     {/if}
@@ -304,16 +307,17 @@
       totalColumns={parsedData.totalColumns}
       {speed}
       {isLoaded}
-      onplay={handlePlay}
-      onpause={handlePause}
-      onprev={() => seekTo(activePosition - 1)}
-      onnext={() => seekTo(activePosition + 1)}
-      onfirst={() => seekTo(0)}
-      onlast={() => seekTo(parsedData.totalColumns - 1)}
+      onplay={() => { playClick(currentTheme); handlePlay(); }}
+      onpause={() => { playClick(currentTheme); handlePause(); }}
+      onprev={() => { playClick(currentTheme); seekTo(activePosition - 1); }}
+      onnext={() => { playClick(currentTheme); seekTo(activePosition + 1); }}
+      onfirst={() => { playClick(currentTheme); seekTo(0); }}
+      onlast={() => { playClick(currentTheme); seekTo(parsedData.totalColumns - 1); }}
       onspeedchange={handleSpeedChange}
       onseek={seekTo}
       volume={masterVolume}
       onvolumechange={handleVolumeChange}
+      onuiclick={() => playClick(currentTheme)}
     />
     <footer class="site-footer">
       Last updated {buildTime.toLocaleString(undefined, { hour: '2-digit', minute: '2-digit', hour12: false, year: 'numeric', month: 'short', day: 'numeric' })} ({relativeTime})

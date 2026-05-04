@@ -20,6 +20,7 @@
    *   onseek: (position: number) => void,
    *   volume: number,
    *   onvolumechange: (volume: number) => void,
+   *   onuiclick: () => void,
    * }} */
   let {
     isPlaying = false,
@@ -37,6 +38,7 @@
     onseek = () => {},
     volume = 0.8,
     onvolumechange = () => {},
+    onuiclick = () => {},
   } = $props();
 
   // A speed of 0 (or negative) makes playback timing collapse to Infinity
@@ -75,11 +77,13 @@
   }
 
   function decrementSpeed() {
+    onuiclick();
     const newSpeed = Math.max(MIN_SPEED, Math.round((speed - 0.1) * 100) / 100);
     onspeedchange(newSpeed);
   }
 
   function incrementSpeed() {
+    onuiclick();
     const newSpeed = Math.round((speed + 0.1) * 100) / 100;
     onspeedchange(newSpeed);
   }
@@ -309,20 +313,27 @@
   }
 
   .control-btn {
-    background: none;
-    border: none;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
     color: var(--text);
     padding: 8px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: background 0.2s, color 0.2s;
+    transition: all 0.2s ease;
+    box-shadow: var(--btn-shadow, none);
   }
 
   .control-btn:hover:not(:disabled) {
     background: var(--bg-surface-hover);
     color: var(--text-heading);
+    transform: translateY(-1px);
+  }
+
+  .control-btn:active:not(:disabled) {
+    transform: translateY(1px) scale(0.95);
+    box-shadow: var(--btn-shadow-active, none);
   }
 
   .control-btn:disabled {
@@ -335,11 +346,19 @@
     color: var(--play-btn-text, #0a0a0a);
     width: 44px;
     height: 44px;
+    box-shadow: var(--play-shadow, 0 2px 8px var(--accent-glow));
   }
 
   .play-btn:hover:not(:disabled) {
     background: var(--accent-hover);
     color: var(--play-btn-text, #0a0a0a);
+    box-shadow: var(--play-shadow-hover, 0 4px 16px var(--accent-glow));
+    transform: translateY(-2px);
+  }
+
+  .play-btn:active:not(:disabled) {
+    transform: translateY(1px) scale(0.93);
+    box-shadow: var(--play-shadow-active, 0 1px 4px var(--accent-glow));
   }
 
   .speed-control {
@@ -386,13 +405,20 @@
     justify-content: center;
     cursor: pointer;
     padding: 0;
-    transition: background 0.2s, border-color 0.2s;
+    transition: all 0.2s ease;
+    box-shadow: var(--btn-shadow, none);
   }
 
   .speed-btn:hover {
     background: var(--accent);
     color: #0a0a0a;
     border-color: var(--accent);
+    transform: translateY(-1px);
+  }
+
+  .speed-btn:active {
+    transform: translateY(1px) scale(0.93);
+    box-shadow: var(--btn-shadow-active, none);
   }
 
   .speed-control input[type='range'] {
