@@ -8,6 +8,30 @@
   import TabDisplay from './components/TabDisplay.svelte';
   import StringVolumes from './components/StringVolumes.svelte';
 
+  // Build timestamp injected by Vite at build time
+  const buildTime = new Date(__BUILD_TIME__);
+  let relativeTime = $state('');
+
+  function updateRelativeTime() {
+    const now = Date.now();
+    const diff = now - buildTime.getTime();
+    const seconds = Math.floor(diff / 1000);
+    const minutes = Math.floor(seconds / 60);
+    const hours = Math.floor(minutes / 60);
+    const days = Math.floor(hours / 24);
+
+    if (seconds < 60) relativeTime = 'just now';
+    else if (minutes < 60) relativeTime = `${minutes} minute${minutes !== 1 ? 's' : ''} ago`;
+    else if (hours < 24) relativeTime = `${hours} hour${hours !== 1 ? 's' : ''} ago`;
+    else relativeTime = `${days} day${days !== 1 ? 's' : ''} ago`;
+  }
+
+  $effect(() => {
+    updateRelativeTime();
+    const id = setInterval(updateRelativeTime, 60000);
+    return () => clearInterval(id);
+  });
+
   // State
   let rawTabText = $state('');
   let parsedData = $state({ tuning: [], timeline: [], rawLines: [], totalColumns: 0, colMaps: [] });
@@ -269,6 +293,10 @@
       />
     </section>
   </div>
+
+  <footer class="site-footer">
+    Last updated {buildTime.toLocaleString()} ({relativeTime})
+  </footer>
 </main>
 
 <style>
@@ -359,6 +387,13 @@
   .player-section :global(.player-controls) {
     max-width: 1100px;
     margin: 0 auto;
+  }
+
+  .site-footer {
+    text-align: center;
+    padding: 24px 0 8px;
+    font-size: 0.8rem;
+    color: var(--text-muted);
   }
 
   @media (max-width: 640px) {
