@@ -294,6 +294,10 @@
     {/if}
 
   </div>
+
+  <footer class="site-footer">
+    Last updated {buildTime.toLocaleString(undefined, { hour: '2-digit', minute: '2-digit', hour12: false, year: 'numeric', month: 'short', day: 'numeric' })} ({relativeTime})
+  </footer>
 </main>
 
 <section class="player-section">
@@ -315,9 +319,6 @@
       volume={masterVolume}
       onvolumechange={handleVolumeChange}
     />
-    <footer class="site-footer">
-      Last updated {buildTime.toLocaleString(undefined, { hour: '2-digit', minute: '2-digit', hour12: false, year: 'numeric', month: 'short', day: 'numeric' })} ({relativeTime})
-    </footer>
   </div>
 </section>
 
@@ -439,7 +440,7 @@
     }
 
     .player-section {
-      padding: 12px 16px;
+      padding: 12px 16px calc(8px + env(safe-area-inset-bottom, 0px));
     }
   }
 </style>

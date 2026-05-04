@@ -283,6 +283,22 @@ input[type='range'].styled-slider::-moz-range-thumb {
   -webkit-backdrop-filter: blur(12px);
 }
 
+[data-theme="glassmorphic"] ::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+[data-theme="glassmorphic"] ::-webkit-scrollbar-thumb {
+  background: rgba(192, 132, 252, 0.3);
+}
+
+[data-theme="glassmorphic"] ::-webkit-scrollbar-thumb:hover {
+  background: rgba(192, 132, 252, 0.5);
+}
+
+[data-theme="glassmorphic"] * {
+  scrollbar-color: rgba(192, 132, 252, 0.3) rgba(255, 255, 255, 0.04);
+}
+
 /* ───── Cyberpunk theme overrides ───── */
 [data-theme="cyberpunk"] select:focus,
 [data-theme="cyberpunk"] textarea:focus,
