@@ -200,48 +200,49 @@
       </button>
     </div>
 
-    <!-- Speed control -->
-    <div class="speed-control">
-      <input
-        class="speed-input"
-        type="text"
-        value={speed.toFixed(2)}
-        oninput={handleSpeedInput}
-        onblur={handleSpeedBlur}
-        aria-label="Speed multiplier"
-      />
-      <span class="speed-x">x</span>
-      <button class="speed-btn" onclick={decrementSpeed} aria-label="Decrease speed">-</button>
-      <input
-        id="speed-slider"
-        type="range"
-        class="styled-slider"
-        min="0.1"
-        max="4"
-        step="0.05"
-        value={Math.min(4, speed)}
-        oninput={handleSpeedChange}
-        style="background: linear-gradient(to right, var(--accent) {((Math.min(4, speed) - 0.1) / 3.9 * 100)}%, var(--bg-input) {((Math.min(4, speed) - 0.1) / 3.9 * 100)}%);"
-      />
-      <button class="speed-btn" onclick={incrementSpeed} aria-label="Increase speed">+</button>
-    </div>
+    <!-- Right side: speed + volume -->
+    <div class="right-controls">
+      <div class="speed-control">
+        <input
+          class="speed-input"
+          type="text"
+          value={speed.toFixed(2)}
+          oninput={handleSpeedInput}
+          onblur={handleSpeedBlur}
+          aria-label="Speed multiplier"
+        />
+        <span class="speed-x">x</span>
+        <button class="speed-btn" onclick={decrementSpeed} aria-label="Decrease speed">-</button>
+        <input
+          id="speed-slider"
+          type="range"
+          class="styled-slider"
+          min="0.1"
+          max="4"
+          step="0.05"
+          value={Math.min(4, speed)}
+          oninput={handleSpeedChange}
+          style="background: linear-gradient(to right, var(--accent) {((Math.min(4, speed) - 0.1) / 3.9 * 100)}%, var(--bg-input) {((Math.min(4, speed) - 0.1) / 3.9 * 100)}%);"
+        />
+        <button class="speed-btn" onclick={incrementSpeed} aria-label="Increase speed">+</button>
+      </div>
 
-    <!-- Volume control -->
-    <div class="volume-control">
-      <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16" class="volume-icon">
-        <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3A4.5 4.5 0 0014 8.5v7a4.49 4.49 0 002.5-3.5z" />
-      </svg>
-      <input
-        type="range"
-        class="styled-slider master-volume-slider"
-        min="0"
-        max="1"
-        step="0.05"
-        value={volume}
-        oninput={handleVolumeInput}
-        aria-label="Master volume"
-        style="background: linear-gradient(to right, var(--accent) {(volume * 100)}%, var(--bg-input) {(volume * 100)}%);"
-      />
+      <div class="volume-control">
+        <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16" class="volume-icon">
+          <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3A4.5 4.5 0 0014 8.5v7a4.49 4.49 0 002.5-3.5z" />
+        </svg>
+        <input
+          type="range"
+          class="styled-slider master-volume-slider"
+          min="0"
+          max="1"
+          step="0.05"
+          value={volume}
+          oninput={handleVolumeInput}
+          aria-label="Master volume"
+          style="background: linear-gradient(to right, var(--accent) {(volume * 100)}%, var(--bg-input) {(volume * 100)}%);"
+        />
+      </div>
     </div>
   </div>
 </div>
@@ -275,8 +276,15 @@
     gap: 16px;
   }
 
-  .position-display, .speed-control {
+  .position-display, .right-controls {
     flex: 1;
+  }
+
+  .right-controls {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    justify-content: flex-end;
   }
 
   .position-display {
@@ -339,7 +347,6 @@
     align-items: center;
     gap: 8px;
     min-width: 120px;
-    justify-content: flex-end;
   }
 
   .speed-input {
@@ -430,20 +437,19 @@
       justify-content: center;
     }
 
-    .speed-control {
+    .right-controls {
       order: 2;
       flex: 0 0 auto;
-      min-width: auto;
+      flex-wrap: wrap;
       justify-content: center;
+    }
+
+    .speed-control {
+      min-width: auto;
     }
 
     .speed-control input[type='range'] {
       width: 60px;
-    }
-
-    .volume-control {
-      order: 2;
-      flex: 0 0 auto;
     }
   }
 </style>
