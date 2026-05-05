@@ -294,6 +294,10 @@
     {/if}
 
   </div>
+
+  <footer class="site-footer">
+    Last updated {buildTime.toLocaleString(undefined, { hour: '2-digit', minute: '2-digit', hour12: false, year: 'numeric', month: 'short', day: 'numeric' })} ({relativeTime})
+  </footer>
 </main>
 
 <section class="player-section">
@@ -316,18 +320,14 @@
       onvolumechange={handleVolumeChange}
     />
   </div>
-  <footer class="site-footer">
-    Last updated {buildTime.toLocaleString(undefined, { hour: '2-digit', minute: '2-digit', hour12: false, year: 'numeric', month: 'short', day: 'numeric' })} ({relativeTime})
-  </footer>
 </section>
 
 <style>
   main {
     max-width: 1100px;
     margin: 0 auto;
-    padding: 32px 24px 24px;
+    padding: 32px 24px 140px;
     width: 100%;
-    flex: 1;
   }
 
   header {
@@ -397,8 +397,10 @@
   }
 
   .player-section {
-    position: sticky;
+    position: fixed;
     bottom: 0;
+    left: 0;
+    right: 0;
     padding: 16px 24px calc(8px + env(safe-area-inset-bottom, 0px));
     background: var(--bg);
     border-top: 1px solid var(--border);
@@ -426,7 +428,7 @@
 
   @media (max-width: 640px) {
     main {
-      padding: 20px 16px 16px;
+      padding: 20px 16px 180px;
     }
 
     h1 {
@@ -438,7 +440,7 @@
     }
 
     .player-section {
-      padding: 12px 16px calc(4px + env(safe-area-inset-bottom, 0px));
+      padding: 12px 16px calc(8px + env(safe-area-inset-bottom, 0px));
     }
   }
 </style>
