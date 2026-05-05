@@ -9,18 +9,36 @@
   import StringVolumes from './components/StringVolumes.svelte';
   import ThemeSelector from './components/ThemeSelector.svelte';
 
-  // Theme
-  let currentTheme = $state(localStorage.getItem('guitar-tab-theme') || 'neumorphic');
+  // Theme (style + color)
+  let currentStyle = $state(localStorage.getItem('guitar-tab-style') || 'neumorphic');
+  let currentColor = $state(localStorage.getItem('guitar-tab-color') || 'lavender');
 
-  function handleThemeChange(theme) {
-    currentTheme = theme;
-    localStorage.setItem('guitar-tab-theme', theme);
-    document.documentElement.setAttribute('data-theme', theme);
+  function handleStyleChange(style) {
+    currentStyle = style;
+    localStorage.setItem('guitar-tab-style', style);
+    document.documentElement.setAttribute('data-style', style);
   }
 
-  // Apply saved theme on mount
+  function handleColorChange(color) {
+    currentColor = color;
+    localStorage.setItem('guitar-tab-color', color);
+    document.documentElement.setAttribute('data-color', color);
+  }
+
+  // Migrate old theme setting
   $effect(() => {
-    document.documentElement.setAttribute('data-theme', currentTheme);
+    const oldTheme = localStorage.getItem('guitar-tab-theme');
+    if (oldTheme && !localStorage.getItem('guitar-tab-style')) {
+      const styleMap = { neumorphic: 'neumorphic', glassmorphic: 'glassmorphic', cyberpunk: 'simple', retro: 'simple', midnight: 'simple' };
+      const colorMap = { neumorphic: 'lavender', glassmorphic: 'midnight', cyberpunk: 'cyberpunk', retro: 'retro', midnight: 'midnight' };
+      currentStyle = styleMap[oldTheme] || 'neumorphic';
+      currentColor = colorMap[oldTheme] || 'lavender';
+      localStorage.setItem('guitar-tab-style', currentStyle);
+      localStorage.setItem('guitar-tab-color', currentColor);
+      localStorage.removeItem('guitar-tab-theme');
+    }
+    document.documentElement.setAttribute('data-style', currentStyle);
+    document.documentElement.setAttribute('data-color', currentColor);
   });
 
   // Build timestamp injected by Vite at build time
@@ -244,7 +262,7 @@
   <header>
     <h1>Guitar Tab Player</h1>
     <p class="subtitle">Paste your guitar tablature and listen to it played back</p>
-    <ThemeSelector {currentTheme} onchange={handleThemeChange} />
+    <ThemeSelector {currentStyle} {currentColor} onstylechange={handleStyleChange} oncolorchange={handleColorChange} />
   </header>
 
   <div class="content">
