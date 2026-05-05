@@ -1,6 +1,10 @@
-/* ───── Default (Neumorphic) theme ───── */
+/* ═══════════════════════════════════════════════
+   COLOR PALETTES — pick one via [data-color]
+   ═══════════════════════════════════════════════ */
+
+/* ── Lavender (default) ── */
 :root,
-[data-theme="neumorphic"] {
+[data-color="lavender"] {
   --bg: #2a2a3a;
   --bg-surface: #2e2e40;
   --bg-surface-hover: #363650;
@@ -11,115 +15,20 @@
   --accent: #a78bfa;
   --accent-hover: #8b5cf6;
   --accent-glow: rgba(167, 139, 250, 0.12);
-  --border: transparent;
+  --border: #2a2a44;
   --border-focus: #a78bfa;
   --success: #86efac;
   --warning: #fcd34d;
   --error: #fca5a5;
+  --play-btn-text: #1a1a2e;
+  --shadow-color: #1a1a28;
+  --shadow-light: #3e3e56;
   --mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', ui-monospace, Consolas, monospace;
   --sans: 'Inter', system-ui, -apple-system, sans-serif;
-  --radius: 16px;
-  --radius-lg: 20px;
-  --shadow: 6px 6px 14px #1a1a28, -6px -6px 14px #3e3e56;
-  --shadow-inset: inset 3px 3px 8px #1a1a28, inset -3px -3px 8px #3e3e56;
-  --surface-blur: none;
-  --surface-bg: var(--bg-surface);
-  --play-btn-text: #1a1a2e;
-  --btn-shadow: 4px 4px 10px #1a1a28, -4px -4px 10px #3e3e56;
-  --btn-shadow-active: inset 3px 3px 6px #1a1a28, inset -3px -3px 6px #3e3e56;
-  --play-shadow: 4px 4px 12px #1a1a28, -4px -4px 12px #3e3e56;
-  --play-shadow-hover: 6px 6px 16px #1a1a28, -6px -6px 16px #3e3e56;
-  --play-shadow-active: inset 3px 3px 8px #1a1a28, inset -3px -3px 8px #3e3e56;
 }
 
-/* ───── Glassmorphic ───── */
-[data-theme="glassmorphic"] {
-  --bg: #1a0a2e;
-  --bg-surface: rgba(255, 255, 255, 0.08);
-  --bg-surface-hover: rgba(255, 255, 255, 0.14);
-  --bg-input: rgba(255, 255, 255, 0.05);
-  --text: #e0d6f0;
-  --text-muted: #9a8abb;
-  --text-heading: #f8f0ff;
-  --accent: #c084fc;
-  --accent-hover: #a855f7;
-  --accent-glow: rgba(192, 132, 252, 0.2);
-  --border: rgba(255, 255, 255, 0.12);
-  --border-focus: #c084fc;
-  --success: #6ee7b7;
-  --warning: #fbbf24;
-  --error: #f87171;
-  --radius: 16px;
-  --radius-lg: 20px;
-  --shadow: 0 8px 32px rgba(100, 40, 180, 0.25);
-  --surface-blur: blur(20px);
-  --surface-bg: rgba(255, 255, 255, 0.08);
-  --play-btn-text: #1a0a2e;
-  --btn-shadow: 0 2px 12px rgba(100, 40, 180, 0.15);
-  --btn-shadow-active: inset 0 2px 8px rgba(0, 0, 0, 0.3);
-  --play-shadow: 0 4px 20px rgba(192, 132, 252, 0.3);
-  --play-shadow-hover: 0 6px 28px rgba(192, 132, 252, 0.45);
-  --play-shadow-active: inset 0 2px 8px rgba(0, 0, 0, 0.4);
-}
-
-/* ───── Cyberpunk ───── */
-[data-theme="cyberpunk"] {
-  --bg: #0a0a12;
-  --bg-surface: #12121f;
-  --bg-surface-hover: #1a1a2e;
-  --bg-input: #0e0e18;
-  --text: #e0e0ff;
-  --text-muted: #6a6a9e;
-  --text-heading: #f0f0ff;
-  --accent: #00ffcc;
-  --accent-hover: #00e6b8;
-  --accent-glow: rgba(0, 255, 204, 0.12);
-  --border: #1a1a3a;
-  --border-focus: #00ffcc;
-  --success: #00ff88;
-  --warning: #ffcc00;
-  --error: #ff4466;
-  --radius: 4px;
-  --radius-lg: 6px;
-  --shadow: 0 0 20px rgba(0, 255, 204, 0.08);
-  --play-btn-text: #0a0a12;
-  --btn-shadow: 0 0 8px rgba(0, 255, 204, 0.1);
-  --btn-shadow-active: inset 0 0 10px rgba(0, 255, 204, 0.15);
-  --play-shadow: 0 0 16px rgba(0, 255, 204, 0.25), 0 0 4px rgba(0, 255, 204, 0.5);
-  --play-shadow-hover: 0 0 24px rgba(0, 255, 204, 0.4), 0 0 8px rgba(0, 255, 204, 0.6);
-  --play-shadow-active: inset 0 0 12px rgba(0, 255, 204, 0.3);
-}
-
-/* ───── Retro ───── */
-[data-theme="retro"] {
-  --bg: #1a1410;
-  --bg-surface: #241e18;
-  --bg-surface-hover: #302820;
-  --bg-input: #1e1812;
-  --text: #d4c4a0;
-  --text-muted: #8a7a5a;
-  --text-heading: #f0e4c8;
-  --accent: #e8a040;
-  --accent-hover: #f0b050;
-  --accent-glow: rgba(232, 160, 64, 0.12);
-  --border: #3a3020;
-  --border-focus: #e8a040;
-  --success: #88c878;
-  --warning: #e8c040;
-  --error: #d86040;
-  --radius: 6px;
-  --radius-lg: 10px;
-  --shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
-  --play-btn-text: #1a1410;
-  --btn-shadow: 0 3px 6px rgba(0, 0, 0, 0.4);
-  --btn-shadow-active: inset 0 2px 4px rgba(0, 0, 0, 0.5);
-  --play-shadow: 0 4px 12px rgba(232, 160, 64, 0.2);
-  --play-shadow-hover: 0 6px 16px rgba(232, 160, 64, 0.35);
-  --play-shadow-active: inset 0 2px 6px rgba(0, 0, 0, 0.5);
-}
-
-/* ───── Midnight ───── */
-[data-theme="midnight"] {
+/* ── Midnight ── */
+[data-color="midnight"] {
   --bg: #0a0a0a;
   --bg-surface: #17141f;
   --bg-surface-hover: #1f1b2a;
@@ -135,16 +44,158 @@
   --success: #a3e4b8;
   --warning: #f0d4a0;
   --error: #f0a0a0;
+  --play-btn-text: #0a0a0a;
+  --shadow-color: #000000;
+  --shadow-light: #1f1b2a;
+}
+
+/* ── Cyberpunk ── */
+[data-color="cyberpunk"] {
+  --bg: #0a0a12;
+  --bg-surface: #12121f;
+  --bg-surface-hover: #1a1a2e;
+  --bg-input: #0e0e18;
+  --text: #e0e0ff;
+  --text-muted: #6a6a9e;
+  --text-heading: #f0f0ff;
+  --accent: #00ffcc;
+  --accent-hover: #00e6b8;
+  --accent-glow: rgba(0, 255, 204, 0.12);
+  --border: #1a1a3a;
+  --border-focus: #00ffcc;
+  --success: #00ff88;
+  --warning: #ffcc00;
+  --error: #ff4466;
+  --play-btn-text: #0a0a12;
+  --shadow-color: #000000;
+  --shadow-light: #1a1a2e;
+}
+
+/* ── Retro ── */
+[data-color="retro"] {
+  --bg: #1a1410;
+  --bg-surface: #241e18;
+  --bg-surface-hover: #302820;
+  --bg-input: #1e1812;
+  --text: #d4c4a0;
+  --text-muted: #8a7a5a;
+  --text-heading: #f0e4c8;
+  --accent: #e8a040;
+  --accent-hover: #f0b050;
+  --accent-glow: rgba(232, 160, 64, 0.12);
+  --border: #3a3020;
+  --border-focus: #e8a040;
+  --success: #88c878;
+  --warning: #e8c040;
+  --error: #d86040;
+  --play-btn-text: #1a1410;
+  --shadow-color: #0a0800;
+  --shadow-light: #3a3020;
+}
+
+/* ── Ocean ── */
+[data-color="ocean"] {
+  --bg: #0a1620;
+  --bg-surface: #122030;
+  --bg-surface-hover: #1a2e42;
+  --bg-input: #0e1a28;
+  --text: #b8d4e8;
+  --text-muted: #5a8aaa;
+  --text-heading: #e0f0ff;
+  --accent: #38bdf8;
+  --accent-hover: #0ea5e9;
+  --accent-glow: rgba(56, 189, 248, 0.12);
+  --border: #1a3050;
+  --border-focus: #38bdf8;
+  --success: #34d399;
+  --warning: #fbbf24;
+  --error: #fb7185;
+  --play-btn-text: #0a1620;
+  --shadow-color: #040e18;
+  --shadow-light: #1a3050;
+}
+
+/* ── Rose ── */
+[data-color="rose"] {
+  --bg: #1a0a14;
+  --bg-surface: #241420;
+  --bg-surface-hover: #30202c;
+  --bg-input: #1e0e18;
+  --text: #e8c0d8;
+  --text-muted: #9a6080;
+  --text-heading: #ffe0f0;
+  --accent: #f472b6;
+  --accent-hover: #ec4899;
+  --accent-glow: rgba(244, 114, 182, 0.12);
+  --border: #3a2030;
+  --border-focus: #f472b6;
+  --success: #86efac;
+  --warning: #fcd34d;
+  --error: #fca5a5;
+  --play-btn-text: #1a0a14;
+  --shadow-color: #0a0008;
+  --shadow-light: #3a2030;
+}
+
+
+/* ═══════════════════════════════════════════════
+   STYLES — pick one via [data-style]
+   ═══════════════════════════════════════════════ */
+
+/* ── Simple (default, flat) ── */
+:root,
+[data-style="simple"] {
   --radius: 8px;
   --radius-lg: 12px;
   --shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-  --play-btn-text: #0a0a0a;
+  --shadow-inset: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+  --surface-blur: none;
+  --surface-bg: var(--bg-surface);
   --btn-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
   --btn-shadow-active: inset 0 2px 6px rgba(0, 0, 0, 0.4);
-  --play-shadow: 0 4px 16px rgba(212, 187, 255, 0.2);
-  --play-shadow-hover: 0 6px 24px rgba(212, 187, 255, 0.35);
+  --play-shadow: 0 4px 16px var(--accent-glow);
+  --play-shadow-hover: 0 6px 24px var(--accent-glow);
   --play-shadow-active: inset 0 2px 8px rgba(0, 0, 0, 0.4);
 }
+
+/* ── Neumorphic ── */
+[data-style="neumorphic"] {
+  --radius: 16px;
+  --radius-lg: 20px;
+  --shadow: 6px 6px 14px var(--shadow-color), -6px -6px 14px var(--shadow-light);
+  --shadow-inset: inset 3px 3px 8px var(--shadow-color), inset -3px -3px 8px var(--shadow-light);
+  --surface-blur: none;
+  --surface-bg: var(--bg-surface);
+  --btn-shadow: 4px 4px 10px var(--shadow-color), -4px -4px 10px var(--shadow-light);
+  --btn-shadow-active: inset 3px 3px 6px var(--shadow-color), inset -3px -3px 6px var(--shadow-light);
+  --play-shadow: 4px 4px 12px var(--shadow-color), -4px -4px 12px var(--shadow-light);
+  --play-shadow-hover: 6px 6px 16px var(--shadow-color), -6px -6px 16px var(--shadow-light);
+  --play-shadow-active: inset 3px 3px 8px var(--shadow-color), inset -3px -3px 8px var(--shadow-light);
+}
+
+/* ── Glassmorphic ── */
+[data-style="glassmorphic"] {
+  --radius: 16px;
+  --radius-lg: 20px;
+  --shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+  --shadow-inset: inset 0 2px 4px rgba(0, 0, 0, 0.15);
+  --surface-blur: blur(20px);
+  --surface-bg: rgba(255, 255, 255, 0.08);
+  --bg-surface: rgba(255, 255, 255, 0.08);
+  --bg-surface-hover: rgba(255, 255, 255, 0.14);
+  --bg-input: rgba(255, 255, 255, 0.05);
+  --border: rgba(255, 255, 255, 0.12);
+  --btn-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+  --btn-shadow-active: inset 0 2px 8px rgba(0, 0, 0, 0.3);
+  --play-shadow: 0 4px 20px var(--accent-glow);
+  --play-shadow-hover: 0 6px 28px var(--accent-glow);
+  --play-shadow-active: inset 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+
+/* ═══════════════════════════════════════════════
+   BASE STYLES
+   ═══════════════════════════════════════════════ */
 
 *,
 *::before,
@@ -162,8 +213,8 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-[data-theme="glassmorphic"] body {
-  background: linear-gradient(135deg, #1a0a2e 0%, #0d1b3e 50%, #1a0a2e 100%);
+[data-style="glassmorphic"] body {
+  background: linear-gradient(135deg, var(--bg) 0%, color-mix(in srgb, var(--bg), var(--accent) 15%) 50%, var(--bg) 100%);
   background-attachment: fixed;
 }
 
@@ -261,47 +312,47 @@ input[type='range'].styled-slider::-moz-range-thumb {
   box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
 }
 
-/* ───── Neumorphic theme overrides ───── */
-[data-theme="neumorphic"] select,
-[data-theme="neumorphic"] textarea,
-[data-theme="neumorphic"] input[type="text"] {
+/* ───── Neumorphic style overrides ───── */
+[data-style="neumorphic"] select,
+[data-style="neumorphic"] textarea,
+[data-style="neumorphic"] input[type="text"] {
   border: none;
   box-shadow: var(--shadow-inset);
 }
 
-[data-theme="neumorphic"] select:focus,
-[data-theme="neumorphic"] textarea:focus,
-[data-theme="neumorphic"] input[type="text"]:focus {
+[data-style="neumorphic"] select:focus,
+[data-style="neumorphic"] textarea:focus,
+[data-style="neumorphic"] input[type="text"]:focus {
   box-shadow: var(--shadow-inset), 0 0 0 2px var(--accent-glow);
 }
 
-/* ───── Glassmorphic theme overrides ───── */
-[data-theme="glassmorphic"] select,
-[data-theme="glassmorphic"] textarea,
-[data-theme="glassmorphic"] input[type="text"] {
+/* ───── Glassmorphic style overrides ───── */
+[data-style="glassmorphic"] select,
+[data-style="glassmorphic"] textarea,
+[data-style="glassmorphic"] input[type="text"] {
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
 }
 
-[data-theme="glassmorphic"] ::-webkit-scrollbar-track {
+[data-style="glassmorphic"] ::-webkit-scrollbar-track {
   background: rgba(255, 255, 255, 0.04);
 }
 
-[data-theme="glassmorphic"] ::-webkit-scrollbar-thumb {
-  background: rgba(192, 132, 252, 0.3);
+[data-style="glassmorphic"] ::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--accent), transparent 70%);
 }
 
-[data-theme="glassmorphic"] ::-webkit-scrollbar-thumb:hover {
-  background: rgba(192, 132, 252, 0.5);
+[data-style="glassmorphic"] ::-webkit-scrollbar-thumb:hover {
+  background: color-mix(in srgb, var(--accent), transparent 50%);
 }
 
-[data-theme="glassmorphic"] * {
-  scrollbar-color: rgba(192, 132, 252, 0.3) rgba(255, 255, 255, 0.04);
+[data-style="glassmorphic"] * {
+  scrollbar-color: color-mix(in srgb, var(--accent), transparent 70%) rgba(255, 255, 255, 0.04);
 }
 
-/* ───── Cyberpunk theme overrides ───── */
-[data-theme="cyberpunk"] select:focus,
-[data-theme="cyberpunk"] textarea:focus,
-[data-theme="cyberpunk"] input[type="text"]:focus {
+/* ───── Simple style — cyberpunk-like focus glow ───── */
+[data-style="simple"] select:focus,
+[data-style="simple"] textarea:focus,
+[data-style="simple"] input[type="text"]:focus {
   box-shadow: 0 0 8px var(--accent-glow), 0 0 0 1px var(--accent);
 }
