@@ -111,23 +111,22 @@
 <svelte:window onkeydown={handleKeydown} />
 
 <div class="player-controls" class:disabled={!isLoaded || totalColumns === 0}>
-  <!-- Progress bar + position -->
-  <div class="progress-row">
-    <input
-      type="range"
-      class="styled-slider progress-slider"
-      min="0"
-      max={Math.max(totalColumns - 1, 0)}
-      value={currentPosition}
-      oninput={(e) => onseek(parseInt(e.target.value))}
-      aria-label="Playback position"
-      style="background: linear-gradient(to right, var(--accent) {progressPercent}%, var(--bg-input) {progressPercent}%);"
-    />
-    <div class="position-display">
-      <span class="current">{totalColumns > 0 ? currentPosition + 1 : '-'}</span>
-      <span class="separator">/</span>
-      <span class="total">{totalColumns}</span>
-    </div>
+  <!-- Progress bar -->
+  <input
+    type="range"
+    class="styled-slider progress-slider"
+    min="0"
+    max={Math.max(totalColumns - 1, 0)}
+    value={currentPosition}
+    oninput={(e) => onseek(parseInt(e.target.value))}
+    aria-label="Playback position"
+    style="background: linear-gradient(to right, var(--accent) {progressPercent}%, var(--bg-input) {progressPercent}%);"
+  />
+  <!-- Position display -->
+  <div class="position-display">
+    <span class="current">{totalColumns > 0 ? currentPosition + 1 : '-'}</span>
+    <span class="separator">/</span>
+    <span class="total">{totalColumns}</span>
   </div>
 
   <div class="controls-row">
@@ -267,23 +266,17 @@
     pointer-events: none;
   }
 
-  .progress-row {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 12px;
-  }
-
   .progress-slider {
-    flex: 1;
+    width: 100%;
+    margin-bottom: 4px;
   }
 
   .position-display {
     font-family: var(--mono);
     font-size: 0.8rem;
     color: var(--text-muted);
-    white-space: nowrap;
-    flex-shrink: 0;
+    text-align: right;
+    margin-bottom: 8px;
   }
 
   .controls-row {
