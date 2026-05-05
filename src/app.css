@@ -335,19 +335,19 @@ input[type='range'].styled-slider::-moz-range-thumb {
 }
 
 [data-style="glassmorphic"] ::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(30, 20, 50, 0.6);
 }
 
 [data-style="glassmorphic"] ::-webkit-scrollbar-thumb {
-  background: color-mix(in srgb, var(--accent), transparent 70%);
+  background: rgba(255, 255, 255, 0.15);
 }
 
 [data-style="glassmorphic"] ::-webkit-scrollbar-thumb:hover {
-  background: color-mix(in srgb, var(--accent), transparent 50%);
+  background: rgba(255, 255, 255, 0.3);
 }
 
 [data-style="glassmorphic"] * {
-  scrollbar-color: color-mix(in srgb, var(--accent), transparent 70%) rgba(255, 255, 255, 0.04);
+  scrollbar-color: rgba(255, 255, 255, 0.15) rgba(30, 20, 50, 0.6);
 }
 
 /* ───── Simple style — cyberpunk-like focus glow ───── */
