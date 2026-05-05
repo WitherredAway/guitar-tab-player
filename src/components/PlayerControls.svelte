@@ -122,16 +122,43 @@
     aria-label="Playback position"
     style="background: linear-gradient(to right, var(--accent) {progressPercent}%, var(--bg-input) {progressPercent}%);"
   />
+  <!-- Position display -->
+  <div class="position-display">
+    <span class="current">{totalColumns > 0 ? currentPosition + 1 : '-'}</span>
+    <span class="separator">/</span>
+    <span class="total">{totalColumns}</span>
+  </div>
 
   <div class="controls-row">
-    <!-- Position display -->
-    <div class="position-display">
-      <span class="current">{totalColumns > 0 ? currentPosition + 1 : '-'}</span>
-      <span class="separator">/</span>
-      <span class="total">{totalColumns}</span>
+    <!-- Left: speed -->
+    <div class="left-controls">
+      <div class="speed-control">
+        <button class="speed-btn" onclick={decrementSpeed} aria-label="Decrease speed">-</button>
+        <input
+          id="speed-slider"
+          type="range"
+          class="styled-slider"
+          min="0.1"
+          max="4"
+          step="0.05"
+          value={Math.min(4, speed)}
+          oninput={handleSpeedChange}
+          style="background: linear-gradient(to right, var(--accent) {((Math.min(4, speed) - 0.1) / 3.9 * 100)}%, var(--bg-input) {((Math.min(4, speed) - 0.1) / 3.9 * 100)}%);"
+        />
+        <button class="speed-btn" onclick={incrementSpeed} aria-label="Increase speed">+</button>
+        <input
+          class="speed-input"
+          type="text"
+          value={speed.toFixed(2)}
+          oninput={handleSpeedInput}
+          onblur={handleSpeedBlur}
+          aria-label="Speed multiplier"
+        />
+        <span class="speed-x">x</span>
+      </div>
     </div>
 
-    <!-- Transport controls -->
+    <!-- Center: transport controls -->
     <div class="transport">
       <button
         class="control-btn"
@@ -200,33 +227,8 @@
       </button>
     </div>
 
-    <!-- Right side: speed + volume -->
+    <!-- Right: volume -->
     <div class="right-controls">
-      <div class="speed-control">
-        <input
-          class="speed-input"
-          type="text"
-          value={speed.toFixed(2)}
-          oninput={handleSpeedInput}
-          onblur={handleSpeedBlur}
-          aria-label="Speed multiplier"
-        />
-        <span class="speed-x">x</span>
-        <button class="speed-btn" onclick={decrementSpeed} aria-label="Decrease speed">-</button>
-        <input
-          id="speed-slider"
-          type="range"
-          class="styled-slider"
-          min="0.1"
-          max="4"
-          step="0.05"
-          value={Math.min(4, speed)}
-          oninput={handleSpeedChange}
-          style="background: linear-gradient(to right, var(--accent) {((Math.min(4, speed) - 0.1) / 3.9 * 100)}%, var(--bg-input) {((Math.min(4, speed) - 0.1) / 3.9 * 100)}%);"
-        />
-        <button class="speed-btn" onclick={incrementSpeed} aria-label="Increase speed">+</button>
-      </div>
-
       <div class="volume-control">
         <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16" class="volume-icon">
           <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3A4.5 4.5 0 0014 8.5v7a4.49 4.49 0 002.5-3.5z" />
@@ -266,7 +268,15 @@
 
   .progress-slider {
     width: 100%;
-    margin-bottom: 12px;
+    margin-bottom: 4px;
+  }
+
+  .position-display {
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    text-align: right;
+    margin-bottom: 8px;
   }
 
   .controls-row {
@@ -276,22 +286,19 @@
     gap: 16px;
   }
 
-  .position-display, .right-controls {
+  .left-controls, .right-controls {
     flex: 1;
+  }
+
+  .left-controls {
+    display: flex;
+    align-items: center;
   }
 
   .right-controls {
     display: flex;
     align-items: center;
-    gap: 12px;
     justify-content: flex-end;
-  }
-
-  .position-display {
-    font-family: var(--mono);
-    font-size: 0.8rem;
-    color: var(--text-muted);
-    min-width: 70px;
   }
 
   .current {
@@ -443,14 +450,7 @@
 
     .controls-row {
       flex-wrap: wrap;
-      justify-content: center;
       gap: 8px;
-    }
-
-    .position-display {
-      order: 3;
-      flex: 0 0 auto;
-      text-align: center;
     }
 
     .transport {
@@ -459,11 +459,14 @@
       justify-content: center;
     }
 
-    .right-controls {
+    .left-controls {
       order: 2;
       flex: 0 0 auto;
-      flex-wrap: wrap;
-      justify-content: center;
+    }
+
+    .right-controls {
+      order: 3;
+      flex: 0 0 auto;
     }
 
     .speed-control {
