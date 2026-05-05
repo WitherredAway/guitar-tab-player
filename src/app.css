@@ -142,23 +142,8 @@
    STYLES — pick one via [data-style]
    ═══════════════════════════════════════════════ */
 
-/* ── Simple (default, flat) ── */
+/* ── Neumorphic (default) ── */
 :root,
-[data-style="simple"] {
-  --radius: 8px;
-  --radius-lg: 12px;
-  --shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-  --shadow-inset: inset 0 2px 4px rgba(0, 0, 0, 0.2);
-  --surface-blur: none;
-  --surface-bg: var(--bg-surface);
-  --btn-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-  --btn-shadow-active: inset 0 2px 6px rgba(0, 0, 0, 0.4);
-  --play-shadow: 0 4px 16px var(--accent-glow);
-  --play-shadow-hover: 0 6px 24px var(--accent-glow);
-  --play-shadow-active: inset 0 2px 8px rgba(0, 0, 0, 0.4);
-}
-
-/* ── Neumorphic ── */
 [data-style="neumorphic"] {
   --radius: 16px;
   --radius-lg: 20px;
@@ -171,6 +156,21 @@
   --play-shadow: 4px 4px 12px var(--shadow-color), -4px -4px 12px var(--shadow-light);
   --play-shadow-hover: 6px 6px 16px var(--shadow-color), -6px -6px 16px var(--shadow-light);
   --play-shadow-active: inset 3px 3px 8px var(--shadow-color), inset -3px -3px 8px var(--shadow-light);
+}
+
+/* ── Simple ── */
+[data-style="simple"] {
+  --radius: 8px;
+  --radius-lg: 12px;
+  --shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  --shadow-inset: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+  --surface-blur: none;
+  --surface-bg: var(--bg-surface);
+  --btn-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --btn-shadow-active: inset 0 2px 6px rgba(0, 0, 0, 0.4);
+  --play-shadow: 0 4px 16px var(--accent-glow);
+  --play-shadow-hover: 0 6px 24px var(--accent-glow);
+  --play-shadow-active: inset 0 2px 8px rgba(0, 0, 0, 0.4);
 }
 
 /* ── Glassmorphic ── */
